@@ -374,7 +374,7 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         final List<WorldSaveScanner.DashboardWorldItem> items = WorldSaveScanner.scanAllItems(requireContext());
         final String activeProfileKey = LauncherPreferences.DEFAULT_PREF.getString(
                 LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
-        final String activeFeaturedId = WorldSaveScanner.getFeaturedId(requireContext());
+        final String activeFeaturedId = mFeaturedItem != null ? mFeaturedItem.id : "";
 
         List<AuroraSegmentedHubDialog.HubCardItem> cards = new ArrayList<>();
         for (final WorldSaveScanner.DashboardWorldItem it : items) {
