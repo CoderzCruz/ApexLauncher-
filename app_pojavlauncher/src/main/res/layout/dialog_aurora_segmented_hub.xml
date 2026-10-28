@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/aurora_hub_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_aurora_hub_modal"
+    android:paddingStart="18dp"
+    android:paddingEnd="18dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="10dp">
+
+    <!-- Top Header Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/aurora_hub_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Optional Back Pill when inside a sub-list (e.g. Switch Profile) -->
+        <TextView
+            android:id="@+id/aurora_hub_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center"
+            android:background="@drawable/bg_aurora_open_pill"
+            android:text="@string/aurora_back"
+            android:textColor="@color/aurora_text_white"
+            android:textSize="12sp"
+            android:fontFamily="@font/noto_sans_bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Player / Active Profile Avatar Badge -->
+        <FrameLayout
+            android:id="@+id/aurora_hub_avatar_wrap"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="2dp"
+            android:background="@drawable/bg_aurora_avatar_ring"
+            app:layout_constraintStart_toEndOf="@id/aurora_hub_back_btn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <net.kdt.pojavlaunch.dashboard.RoundedImageView
+                android:id="@+id/aurora_hub_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_voxel_avatar_default"
+                app:auroraCircle="true" />
+        </FrameLayout>
+
+        <!-- Active Profile Name (e.g. "(Default)") -->
+        <TextView
+            android:id="@+id/aurora_hub_profile_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_marginEnd="10dp"
+            android:text="(Default)"
+            android:textColor="@color/aurora_text_white"
+            android:textSize="14sp"
+            android:fontFamily="@font/noto_sans_bold"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintWidth_max="150dp"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/aurora_hub_avatar_wrap"
+            app:layout_constraintEnd_toStartOf="@+id/aurora_hub_center_slot"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Center Slot: 3-Tab Segmented Pill Switcher OR Sub-Modal Title -->
+        <FrameLayout
+            android:id="@+id/aurora_hub_center_slot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:id="@+id/aurora_hub_seg_track"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="3dp"
+                android:background="@drawable/bg_aurora_segmented_track">
+
+                <TextView
+                    android:id="@+id/aurora_hub_tab_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="16dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_aurora_seg_tab_active"
+                    android:text="Profile"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="12.5sp"
+                    android:fontFamily="@font/noto_sans_bold" />
+
+                <TextView
+                    android:id="@+id/aurora_hub_tab_mods"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="14dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_aurora_seg_tab_active"
+                    android:text="Mods &amp; Controls"
+                    android:textColor="@color/aurora_text_sub"
+                    android:textSize="12.5sp" />
+
+                <TextView
+                    android:id="@+id/aurora_hub_tab_system"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="14dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_aurora_seg_tab_active"
+                    android:text="System &amp; Logs"
+                    android:textColor="@color/aurora_text_sub"
+                    android:textSize="12.5sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/aurora_hub_subview_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/aurora_text_white"
+                android:textSize="15sp"
+                android:fontFamily="@font/noto_sans_bold"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- Circular Frosted 'X' Close Button -->
+        <ImageButton
+            android:id="@+id/aurora_hub_close_btn"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:padding="9dp"
+            android:scaleType="fitCenter"
+            android:background="@drawable/bg_aurora_hub_close_btn"
+            android:src="@drawable/ic_aurora_close"
+            android:contentDescription="@android:string/cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Spacious Glass Action Cards List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/aurora_hub_recycler"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:overScrollMode="ifContentScrolls"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintTop_toBottomOf="@id/aurora_hub_header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

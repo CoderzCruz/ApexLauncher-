@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#225EF2E8"
+        android:pathData="M32,32m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
+
+    <!-- Main Isometric Grass Block -->
+    <path
+        android:fillColor="#4ADE80"
+        android:pathData="M29,11 L44,19 L29,27 L14,19 Z" />
+    <path
+        android:fillColor="#8C583A"
+        android:pathData="M14,19 L29,27 L29,44 L14,36 Z" />
+    <path
+        android:fillColor="#22C55E"
+        android:pathData="M14,19 L29,27 L29,31.5 L14,23.5 Z" />
+    <path
+        android:fillColor="#6B4229"
+        android:pathData="M29,27 L44,19 L44,36 L29,44 Z" />
+
+    <!-- Fabric Parchment Scroll (Top-Right) -->
+    <path
+        android:fillColor="#FDE68A"
+        android:strokeColor="#B45309"
+        android:strokeWidth="1.3"
+        android:pathData="M44,13 L55,19 L49,29 L38,23 Z" />
+    <path
+        android:fillColor="#D97706"
+        android:pathData="M42,19 L50,23.5 L49,25.2 L41,20.7 Z" />
+
+    <!-- Modloader Crimson/Gold 'OF' Badge (Bottom-Right) -->
+    <path
+        android:fillColor="#991B1B"
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="1.4"
+        android:pathData="M39,34 L56,34 C57.1,34 58,34.9 58,36 L58,50 C58,51.1 57.1,52 56,52 L39,52 C37.9,52 37,51.1 37,50 L37,36 C37,34.9 37.9,34 39,34 Z" />
+    <!-- Gold 'O' + 'F' -->
+    <path
+        android:fillColor="#FDE047"
+        android:pathData="M41,39 L46,39 L46,47 L41,47 Z M42.7,40.8 L42.7,45.2 L44.3,45.2 L44.3,40.8 Z M48.5,39 L54.5,39 L54.5,40.8 L50.3,40.8 L50.3,42.3 L53.7,42.3 L53.7,44 L50.3,44 L50.3,47 L48.5,47 Z" />
+
+    <!-- Glowing Cyan '+' Circle (Bottom-Left) -->
+    <path
+        android:fillColor="#0891B2"
+        android:strokeColor="#A5F3FC"
+        android:strokeWidth="2"
+        android:pathData="M18,43m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16.5,37 L19.5,37 L19.5,41.5 L24,41.5 L24,44.5 L19.5,44.5 L19.5,49 L16.5,49 L16.5,44.5 L12,44.5 L12,41.5 L16.5,41.5 Z" />
+</vector>

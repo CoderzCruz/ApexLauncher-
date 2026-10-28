@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/aurora_hub_card_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="68dp"
+    android:layout_marginBottom="8dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingVertical="9dp"
+    android:background="@drawable/bg_aurora_hub_action_card"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Multi-Layered Isometric 3D Voxel / Tool Emblem -->
+    <net.kdt.pojavlaunch.dashboard.RoundedImageView
+        android:id="@+id/aurora_hub_item_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_hub_switch_profile"
+        app:auroraCornerRadius="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Bold Title + Descriptive Subtitle -->
+    <LinearLayout
+        android:id="@+id/aurora_hub_item_text_col"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="12dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/aurora_hub_item_icon"
+        app:layout_constraintEnd_toStartOf="@+id/aurora_hub_item_open_btn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/aurora_hub_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Switch World / Profile"
+            android:textColor="@color/aurora_text_white"
+            android:textSize="15.5sp"
+            android:fontFamily="@font/noto_sans_bold"
+            android:shadowColor="#8C000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="3"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/aurora_hub_item_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Choose from saved worlds &amp; instances"
+            android:textColor="@color/aurora_text_sub"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="end" />
+    </LinearLayout>
+
+    <!-- Frosted Pill Action Button ('Open' / 'Run' / 'Select') -->
+    <TextView
+        android:id="@+id/aurora_hub_item_open_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:minWidth="74dp"
+        android:paddingHorizontal="18dp"
+        android:gravity="center"
+        android:background="@drawable/bg_aurora_open_pill"
+        android:text="Open"
+        android:textColor="@color/aurora_text_white"
+        android:textSize="12.5sp"
+        android:fontFamily="@font/noto_sans_bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

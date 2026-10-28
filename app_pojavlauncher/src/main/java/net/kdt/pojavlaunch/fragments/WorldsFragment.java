@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.dashboard.AuroraSegmentedHubDialog;
 import net.kdt.pojavlaunch.dashboard.RoundedImageView;
 import net.kdt.pojavlaunch.dashboard.WorldSaveScanner;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
@@ -159,36 +160,62 @@ public class WorldsFragment extends Fragment {
     }
 
     private void showItemOptions(@NonNull final WorldSaveScanner.DashboardWorldItem item) {
-        List<String> labels = new ArrayList<>();
-        labels.add("Set as Featured on Home");
-        labels.add("Play Now");
-        labels.add("Edit Profile (" + item.versionId + ")");
-        if (item.isSavedWorld && item.worldFolderName != null) {
-            labels.add("Delete Saved World");
+        Bitmap thumb = null;
+        if (item.iconFile != null && item.iconFile.exists()) {
+            thumb = BitmapFactory.decodeFile(item.iconFile.getAbsolutePath());
         }
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle(item.title)
-                .setItems(labels.toArray(new String[0]), (d, which) -> {
-                    if (which == 0) {
-                        WorldSaveScanner.setFeaturedAndSelectProfile(requireContext(), item);
-                        Toast.makeText(requireContext(), "Pinned \"" + item.title + "\" to Home", Toast.LENGTH_SHORT).show();
-                        if (requireActivity() instanceof LauncherActivity) {
-                            ((LauncherActivity) requireActivity()).navigateToTab(LauncherActivity.TAB_HOME, null);
-                        }
-                    } else if (which == 1) {
-                        launchItem(item);
-                    } else if (which == 2) {
-                        LauncherPreferences.DEFAULT_PREF.edit()
-                                .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, item.profileKey)
-                                .apply();
-                        Tools.swapFragment(requireActivity(), ProfileEditorFragment.class,
-                                ProfileEditorFragment.TAG, null);
-                    } else if (which == 3 && item.isSavedWorld) {
-                        confirmDeleteWorld(item);
+        AuroraSegmentedHubDialog.showActionSheet(
+                requireActivity(),
+                item.title,
+                item.isSavedWorld ? "World Options" : "Instance Options",
+                thumb,
+                dialog -> {
+                    List<AuroraSegmentedHubDialog.HubCardItem> cards = new ArrayList<>();
+                    cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                            R.drawable.ic_hub_switch_profile,
+                            "Set as Featured on Home",
+                            "Pin \"" + item.title + "\" to your Home dashboard hero card",
+                            "Pin",
+                            () -> {
+                                WorldSaveScanner.setFeaturedAndSelectProfile(requireContext(), item);
+                                Toast.makeText(requireContext(), "Pinned \"" + item.title + "\" to Home", Toast.LENGTH_SHORT).show();
+                                if (requireActivity() instanceof LauncherActivity) {
+                                    ((LauncherActivity) requireActivity()).navigateToTab(LauncherActivity.TAB_HOME, null);
+                                }
+                            }
+                    ));
+                    cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                            R.drawable.ic_hub_game_folder,
+                            "Play Now",
+                            "Launch Minecraft " + item.versionId + " immediately",
+                            "Play",
+                            () -> launchItem(item)
+                    ));
+                    cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                            R.drawable.ic_hub_edit_profile,
+                            "Edit Profile (" + item.versionId + ")",
+                            "Change MC version, Java runtime & video renderer",
+                            "Edit",
+                            () -> {
+                                LauncherPreferences.DEFAULT_PREF.edit()
+                                        .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, item.profileKey)
+                                        .apply();
+                                Tools.swapFragment(requireActivity(), ProfileEditorFragment.class,
+                                        ProfileEditorFragment.TAG, null);
+                            }
+                    ));
+                    if (item.isSavedWorld && item.worldFolderName != null) {
+                        cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                                R.drawable.ic_hub_launcher_settings,
+                                "Delete Saved World",
+                                "Permanently remove \"" + item.title + "\" from saves/",
+                                "Delete",
+                                () -> confirmDeleteWorld(item)
+                        ));
                     }
-                })
-                .show();
+                    return cards;
+                }
+        );
     }
 
     private void confirmDeleteWorld(@NonNull final WorldSaveScanner.DashboardWorldItem item) {

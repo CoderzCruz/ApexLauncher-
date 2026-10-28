@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <layer-list>
+            <!-- Soft outer cyan glow -->
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="999dp" />
+                    <solid android:color="#385EF2E8" />
+                </shape>
+            </item>
+            <!-- Crisp cyan-teal active pill -->
+            <item
+                android:left="1dp"
+                android:top="1dp"
+                android:right="1dp"
+                android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="999dp" />
+                    <gradient
+                        android:angle="90"
+                        android:startColor="#6614B8A6"
+                        android:endColor="#852DD4BF"
+                        android:type="linear" />
+                    <stroke
+                        android:width="1.4dp"
+                        android:color="#8AFEF7" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="999dp" />
+            <solid android:color="#26FFFFFF" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="999dp" />
+            <solid android:color="#00000000" />
+        </shape>
+    </item>
+</selector>

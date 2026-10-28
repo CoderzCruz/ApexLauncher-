@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#225EF2E8"
+        android:pathData="M32,32m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
+    <!-- Folder Back -->
+    <path
+        android:fillColor="#0E7490"
+        android:strokeColor="#67E8F9"
+        android:strokeWidth="1.6"
+        android:pathData="M8,18 C8,15.8 9.8,14 12,14 L25,14 L30,19 L52,19 C54.2,19 56,20.8 56,23 L56,47 C56,49.2 54.2,51 52,51 L12,51 C9.8,51 8,49.2 8,47 Z" />
+    <!-- Isometric Grass Cube peeking out -->
+    <path
+        android:fillColor="#4ADE80"
+        android:pathData="M38,14 L50,20 L38,26 L26,20 Z" />
+    <path
+        android:fillColor="#8C583A"
+        android:pathData="M26,20 L38,26 L38,38 L26,32 Z" />
+    <path
+        android:fillColor="#6B4229"
+        android:pathData="M38,26 L50,20 L50,32 L38,38 Z" />
+    <!-- Frosted Folder Front Flap -->
+    <path
+        android:fillColor="#BF22D3EE"
+        android:strokeColor="#A5F3FC"
+        android:strokeWidth="1.5"
+        android:pathData="M8,28 L56,28 L53,51 L11,51 Z" />
+</vector>

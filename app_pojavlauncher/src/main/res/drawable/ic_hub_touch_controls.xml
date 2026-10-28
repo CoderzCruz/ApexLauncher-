@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#225EF2E8"
+        android:pathData="M32,32m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
+    <!-- Isometric Glass HUD Screen -->
+    <path
+        android:fillColor="#401E293B"
+        android:strokeColor="#67E8F9"
+        android:strokeWidth="2"
+        android:pathData="M12,14 L52,14 C54.2,14 56,15.8 56,18 L56,42 C56,44.2 54.2,46 52,46 L12,46 C9.8,46 8,44.2 8,42 L8,18 C8,15.8 9.8,14 12,14 Z" />
+    <!-- D-Pad HUD on left -->
+    <path
+        android:fillColor="#5EF2E8"
+        android:pathData="M19,23 L23,23 L23,27 L27,27 L27,31 L23,31 L23,35 L19,35 L19,31 L15,31 L15,27 L19,27 Z" />
+    <!-- Touch Ripple Ring on right -->
+    <path
+        android:fillColor="#33A855F7"
+        android:strokeColor="#C084FC"
+        android:strokeWidth="1.8"
+        android:pathData="M41,28m-7,0a7,7 0,1 1,14 0a7,7 0,1 1,-14 0" />
+    <!-- Touch Finger Silhouette -->
+    <path
+        android:fillColor="#F8FAFC"
+        android:strokeColor="#0F172A"
+        android:strokeWidth="1"
+        android:pathData="M39,27 C39,25.3 40.3,24 42,24 C43.7,24 45,25.3 45,27 L45,35 L49,36.5 C51,37.2 52,39 51.5,41.5 L50,51 L37,51 L35,43 L32.5,39.5 C31.5,38.2 32.5,36.5 34.2,37 L39,39 Z" />
+</vector>

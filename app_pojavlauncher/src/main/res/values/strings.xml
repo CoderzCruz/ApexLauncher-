@@ -450,4 +450,5 @@
     <string name="aurora_import_world_zip">Import World (.zip)</string>
     <string name="aurora_worlds_header">Worlds &amp; Profiles</string>
     <string name="aurora_profile_hub_header">Player Profile &amp; Launcher Settings</string>
+    <string name="aurora_back">← Back</string>
 </resources>

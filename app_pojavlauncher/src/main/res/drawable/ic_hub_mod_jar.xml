@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#2238BDF8"
+        android:pathData="M32,32m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
+    <!-- Isometric Mod Package Cube -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M28,11 L46,20 L28,29 L10,20 Z" />
+    <path
+        android:fillColor="#1E3A5F"
+        android:pathData="M10,20 L28,29 L28,49 L10,40 Z" />
+    <path
+        android:fillColor="#172554"
+        android:pathData="M28,29 L46,20 L46,40 L28,49 Z" />
+    <!-- Package Ribbon -->
+    <path
+        android:fillColor="#A5F3FC"
+        android:pathData="M19,15.5 L37,24.5 L37,33 L33,35 L33,26.5 L15,17.5 Z" />
+    <!-- Glowing Emerald Download/Install Badge -->
+    <path
+        android:fillColor="#059669"
+        android:strokeColor="#6EE7B7"
+        android:strokeWidth="2"
+        android:pathData="M46,44m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,37 L48,37 L48,44 L52,44 L46,50.5 L40,44 L44,44 Z" />
+</vector>

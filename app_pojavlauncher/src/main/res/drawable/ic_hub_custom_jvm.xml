@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#22A855F7"
+        android:pathData="M32,32m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
+    <!-- Terminal Window -->
+    <path
+        android:fillColor="#1E1B38"
+        android:strokeColor="#C084FC"
+        android:strokeWidth="2"
+        android:pathData="M10,14 L48,14 C50.2,14 52,15.8 52,18 L52,44 C52,46.2 50.2,48 48,48 L10,48 C7.8,48 6,46.2 6,44 L6,18 C6,15.8 7.8,14 10,14 Z" />
+    <!-- Terminal Header Dots -->
+    <path android:fillColor="#FB7185" android:pathData="M13,20m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    <path android:fillColor="#FBBF24" android:pathData="M20,20m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    <path android:fillColor="#4ADE80" android:pathData="M27,20m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    <!-- '>_' Prompt -->
+    <path
+        android:fillColor="#5EF2E8"
+        android:pathData="M14,27 L23,33 L14,39 L14,35.5 L18.5,33 L14,30.5 Z M25,37 L35,37 L35,40 L25,40 Z" />
+    <!-- Amber Java Gear Badge -->
+    <path
+        android:fillColor="#D97706"
+        android:strokeColor="#FDE68A"
+        android:strokeWidth="1.8"
+        android:pathData="M47,44m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M47,38 C50,41 45,43 48,46.5 C44,45 44,41.5 47,38 Z M42,48 L52,48 C51.5,50.8 49.5,52 47,52 C44.5,52 42.5,50.8 42,48 Z" />
+</vector>

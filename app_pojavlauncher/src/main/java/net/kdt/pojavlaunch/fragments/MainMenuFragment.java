@@ -23,6 +23,8 @@ import net.kdt.pojavlaunch.JMinecraftVersionList;
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.dashboard.AuroraAccountController;
+import net.kdt.pojavlaunch.dashboard.AuroraSegmentedHubDialog;
 import net.kdt.pojavlaunch.dashboard.DashboardProgressController;
 import net.kdt.pojavlaunch.dashboard.LiveWeatherUpdater;
 import net.kdt.pojavlaunch.dashboard.RoundedImageView;
@@ -31,9 +33,11 @@ import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
+import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceJavaFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.tasks.AsyncMinecraftDownloader;
 import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
+import net.kdt.pojavlaunch.value.MinecraftAccount;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
@@ -351,83 +355,137 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         );
     }
 
-    private void showProfileSelectorDialog() {
-        final List<WorldSaveScanner.DashboardWorldItem> items = WorldSaveScanner.scanAllItems(requireContext());
-        final List<String> names = new ArrayList<>();
-        for (WorldSaveScanner.DashboardWorldItem it : items) {
-            String tag = it.isSavedWorld ? "[World] " : "[Profile] ";
-            names.add(tag + it.title + " (" + it.versionId + ")");
+    @Nullable
+    private Bitmap resolveActiveAvatarBitmap() {
+        if (getActivity() instanceof LauncherActivity) {
+            AuroraAccountController ctrl = ((LauncherActivity) getActivity()).getAccountController();
+            if (ctrl != null) {
+                MinecraftAccount acc = ctrl.getSelectedAccount();
+                if (acc != null) {
+                    return acc.getSkinFace();
+                }
+            }
         }
-        names.add("+ Create New Profile / Modloader...");
+        return null;
+    }
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Select World or Profile")
-                .setItems(names.toArray(new String[0]), (d, which) -> {
-                    if (which == items.size()) {
-                        Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class,
-                                ProfileTypeSelectFragment.TAG, null);
-                    } else if (which >= 0 && which < items.size()) {
-                        selectIntoHero(items.get(which));
-                    }
-                })
-                .show();
+    @NonNull
+    private List<AuroraSegmentedHubDialog.HubCardItem> buildProfileSwitchCards() {
+        final List<WorldSaveScanner.DashboardWorldItem> items = WorldSaveScanner.scanAllItems(requireContext());
+        final String activeProfileKey = LauncherPreferences.DEFAULT_PREF.getString(
+                LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
+        final String activeFeaturedId = WorldSaveScanner.getFeaturedId(requireContext());
+
+        List<AuroraSegmentedHubDialog.HubCardItem> cards = new ArrayList<>();
+        for (final WorldSaveScanner.DashboardWorldItem it : items) {
+            Bitmap thumb = null;
+            if (it.iconFile != null && it.iconFile.exists()) {
+                thumb = BitmapFactory.decodeFile(it.iconFile.getAbsolutePath());
+            }
+            boolean isCurrent = (!activeFeaturedId.isEmpty() && activeFeaturedId.equals(it.id))
+                    || (activeFeaturedId.isEmpty() && !it.isSavedWorld && it.profileKey.equals(activeProfileKey));
+            String kind = it.isSavedWorld ? "Saved World" : "Instance";
+            String subtitle = kind + " • Minecraft " + it.versionId + " • " + it.subtitle;
+            cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                    it.isSavedWorld ? R.drawable.ic_hub_game_folder : R.drawable.ic_hub_switch_profile,
+                    thumb,
+                    null,
+                    it.title,
+                    subtitle,
+                    isCurrent ? "Active" : "Select",
+                    isCurrent,
+                    true,
+                    () -> selectIntoHero(it)
+            ));
+        }
+
+        cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                R.drawable.ic_hub_create_profile,
+                "Create New Profile",
+                "Install Vanilla, Fabric, Forge, Quilt or OptiFine",
+                "Create",
+                () -> Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class,
+                        ProfileTypeSelectFragment.TAG, null)
+        ));
+        return cards;
+    }
+
+    private void showProfileSelectorDialog() {
+        String activeTitle = mFeaturedItem != null ? mFeaturedItem.title : getString(R.string.app_short_name);
+        AuroraSegmentedHubDialog.showActionSheet(
+                requireActivity(),
+                activeTitle,
+                "Switch World / Profile",
+                resolveActiveAvatarBitmap(),
+                dialog -> buildProfileSwitchCards()
+        );
     }
 
     private void showHeroQuickActionsDialog() {
-        String[] actions = new String[]{
-                "Switch World / Profile",
-                "Edit Active Profile (Version, Java, Renderer)",
-                "Create New Profile (Vanilla, Fabric, Forge, Quilt, OptiFine)",
-                "Custom Touch Controls Editor",
-                "Execute Mod Installer (.jar)",
-                "Execute .jar with Custom JVM Arguments",
-                "Controller / Gamepad Remapper",
-                "Open Game Directory",
-                "Share Latest Log File",
-                "Launcher Settings"
-        };
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle(mFeaturedItem != null ? mFeaturedItem.title : getString(R.string.app_short_name))
-                .setItems(actions, (d, which) -> {
-                    switch (which) {
-                        case 0:
-                            showProfileSelectorDialog();
-                            break;
-                        case 1:
-                            Tools.swapFragment(requireActivity(), ProfileEditorFragment.class,
-                                    ProfileEditorFragment.TAG, null);
-                            break;
-                        case 2:
-                            Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class,
-                                    ProfileTypeSelectFragment.TAG, null);
-                            break;
-                        case 3:
-                            startActivity(new Intent(requireContext(), CustomControlsActivity.class));
-                            break;
-                        case 4:
-                            runInstallerWithConfirmation(false);
-                            break;
-                        case 5:
-                            runInstallerWithConfirmation(true);
-                            break;
-                        case 6:
-                            Tools.swapFragment(requireActivity(), GamepadMapperFragment.class,
-                                    GamepadMapperFragment.TAG, null);
-                            break;
-                        case 7:
-                            openGameFolder();
-                            break;
-                        case 8:
-                            shareLog(requireContext());
-                            break;
-                        case 9:
-                            Tools.swapFragment(requireActivity(), LauncherPreferenceFragment.class,
-                                    LauncherActivity.SETTING_FRAGMENT_TAG, null);
-                            break;
+        String activeTitle = mFeaturedItem != null ? mFeaturedItem.title : getString(R.string.app_short_name);
+        AuroraSegmentedHubDialog.showControlHub(
+                requireActivity(),
+                activeTitle,
+                resolveActiveAvatarBitmap(),
+                new AuroraSegmentedHubDialog.ControlHubActions() {
+                    @NonNull
+                    @Override
+                    public List<AuroraSegmentedHubDialog.HubCardItem> buildSwitchProfileItems(
+                            @NonNull android.app.Dialog dialog) {
+                        return buildProfileSwitchCards();
                     }
-                })
-                .show();
+
+                    @Override
+                    public void onEditActiveProfile() {
+                        Tools.swapFragment(requireActivity(), ProfileEditorFragment.class,
+                                ProfileEditorFragment.TAG, null);
+                    }
+
+                    @Override
+                    public void onCreateNewProfile() {
+                        Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class,
+                                ProfileTypeSelectFragment.TAG, null);
+                    }
+
+                    @Override
+                    public void onOpenTouchControls() {
+                        startActivity(new Intent(requireContext(), CustomControlsActivity.class));
+                    }
+
+                    @Override
+                    public void onOpenGamepadRemapper() {
+                        Tools.swapFragment(requireActivity(), GamepadMapperFragment.class,
+                                GamepadMapperFragment.TAG, null);
+                    }
+
+                    @Override
+                    public void onExecuteModInstaller(boolean customJvmArgs) {
+                        runInstallerWithConfirmation(customJvmArgs);
+                    }
+
+                    @Override
+                    public void onOpenGameDirectory() {
+                        openGameFolder();
+                    }
+
+                    @Override
+                    public void onShareLatestLog() {
+                        shareLog(requireContext());
+                    }
+
+                    @Override
+                    public void onOpenJavaSettings() {
+                        Tools.swapFragment(requireActivity(), LauncherPreferenceJavaFragment.class,
+                                "LauncherPreferenceJavaFragment", null);
+                    }
+
+                    @Override
+                    public void onOpenLauncherSettings() {
+                        Tools.swapFragment(requireActivity(), LauncherPreferenceFragment.class,
+                                LauncherActivity.SETTING_FRAGMENT_TAG, null);
+                    }
+                }
+        );
     }
 
     private void openGameFolder() {

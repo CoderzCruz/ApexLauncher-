@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer soft cyan-violet aura rim -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="23dp" />
+            <gradient
+                android:angle="135"
+                android:startColor="#665EF2E8"
+                android:centerColor="#38FFFFFF"
+                android:endColor="#55A855F7"
+                android:type="linear" />
+        </shape>
+    </item>
+    <!-- Inner frosted smoked Aurora Glass body -->
+    <item
+        android:left="1.2dp"
+        android:top="1.2dp"
+        android:right="1.2dp"
+        android:bottom="1.2dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="22dp" />
+            <gradient
+                android:angle="135"
+                android:startColor="#D9172235"
+                android:centerColor="#DE1A2236"
+                android:endColor="#E3141A2B"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list>

@@ -38,6 +38,7 @@ import com.kdt.mcgui.ProgressLayout;
 
 import net.kdt.pojavlaunch.contracts.OpenDocumentWithExtension;
 import net.kdt.pojavlaunch.dashboard.AuroraAccountController;
+import net.kdt.pojavlaunch.dashboard.AuroraSegmentedHubDialog;
 import net.kdt.pojavlaunch.dashboard.RoundedImageView;
 import net.kdt.pojavlaunch.dashboard.WorldSaveScanner;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
@@ -372,32 +373,57 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
     private void showQuickAccountDialog() {
         if (mAccountController == null) return;
         final List<String> saved = mAccountController.getSavedAccountNames();
-        MinecraftAccount active = mAccountController.getSelectedAccount();
+        final MinecraftAccount active = mAccountController.getSelectedAccount();
         if (saved.isEmpty()) {
             ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
             return;
         }
 
-        List<String> items = new ArrayList<>();
-        for (String acc : saved) {
-            boolean isCur = active != null && acc.equals(active.username);
-            items.add(isCur ? "●  " + acc + " (Active)" : "    " + acc);
-        }
-        items.add("+ Add Microsoft / Local Account");
-        items.add("⚙ Profile & Launcher Settings");
+        String badgeLabel = active != null ? active.username : "Accounts";
+        Bitmap badgeAvatar = active != null ? active.getSkinFace() : null;
 
-        new AlertDialog.Builder(this)
-                .setTitle(active != null ? "Player: " + active.username : "Select Account")
-                .setItems(items.toArray(new String[0]), (d, which) -> {
-                    if (which < saved.size()) {
-                        mAccountController.selectAccount(saved.get(which));
-                    } else if (which == saved.size()) {
-                        ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
-                    } else {
-                        navigateToTab(TAB_PROFILE, null);
+        AuroraSegmentedHubDialog.showActionSheet(
+                this,
+                badgeLabel,
+                "Player Accounts",
+                badgeAvatar,
+                dialog -> {
+                    List<AuroraSegmentedHubDialog.HubCardItem> cards = new ArrayList<>();
+                    for (final String accName : saved) {
+                        MinecraftAccount loaded = MinecraftAccount.load(accName);
+                        Bitmap skin = loaded != null ? loaded.getSkinFace() : null;
+                        boolean isCur = active != null && accName.equals(active.username);
+                        String typeDesc = (loaded != null && loaded.isMicrosoft)
+                                ? "Microsoft Xbox Account" : "Local Offline Account";
+                        cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                                R.drawable.ic_voxel_avatar_default,
+                                skin,
+                                null,
+                                accName,
+                                isCur ? typeDesc + " • Currently Active" : typeDesc,
+                                isCur ? "Active" : "Switch",
+                                isCur,
+                                true,
+                                () -> mAccountController.selectAccount(accName)
+                        ));
                     }
-                })
-                .show();
+                    cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                            R.drawable.ic_hub_create_profile,
+                            "Add Account",
+                            "Sign in with Microsoft or create a Local offline player",
+                            "Add",
+                            () -> ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true)
+                    ));
+                    cards.add(new AuroraSegmentedHubDialog.HubCardItem(
+                            R.drawable.ic_hub_launcher_settings,
+                            "Profile & Launcher Settings",
+                            "Manage accounts, Java runtimes, controls & preferences",
+                            "Open",
+                            () -> navigateToTab(TAB_PROFILE, null)
+                    ));
+                    return cards;
+                }
+        );
     }
 
     private void attemptGameLaunch() {

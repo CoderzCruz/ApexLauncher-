@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_app"
+    android:background="@drawable/bg_aurora_glass_card"
+    android:padding="4dp"
     android:orientation="vertical"
     >
     <ScrollView

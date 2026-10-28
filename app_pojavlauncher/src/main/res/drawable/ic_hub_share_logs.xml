@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#2238BDF8"
+        android:pathData="M32,32m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
+    <!-- Document Sheet -->
+    <path
+        android:fillColor="#1E293B"
+        android:strokeColor="#7DD3FC"
+        android:strokeWidth="2"
+        android:pathData="M14,10 L38,10 L48,20 L48,52 C48,54.2 46.2,56 44,56 L14,56 C11.8,56 10,54.2 10,52 L10,14 C10,11.8 11.8,10 14,10 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M38,10 L48,20 L38,20 Z" />
+    <!-- Log Text Lines -->
+    <path
+        android:fillColor="#5EF2E8"
+        android:pathData="M16,25 L34,25 L34,28 L16,28 Z M16,32 L40,32 L40,35 L16,35 Z M16,39 L30,39 L30,42 L16,42 Z" />
+    <!-- Share Arrow Circle -->
+    <path
+        android:fillColor="#0D9488"
+        android:strokeColor="#99F6E4"
+        android:strokeWidth="1.8"
+        android:pathData="M46,45m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M47,39 L53,45 L47,51 L47,47 C43,47 40.5,48.5 39,51 C39.8,46.5 42.5,43 47,43 Z" />
+</vector>
