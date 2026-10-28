@@ -6,4 +6,9 @@
         <!-- Redefine to be able to fetch the value -->
         <attr name="android:min" />
     </declare-styleable>
+
+    <declare-styleable name="RoundedImageView">
+        <attr name="auroraCornerRadius" format="dimension" />
+        <attr name="auroraCircle" format="boolean" />
+    </declare-styleable>
 </resources>

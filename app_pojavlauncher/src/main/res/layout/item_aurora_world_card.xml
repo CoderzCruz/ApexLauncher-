@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="7dp"
+    android:background="@drawable/bg_aurora_sub_row"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="11dp"
+    android:paddingVertical="9dp">
+
+    <net.kdt.pojavlaunch.dashboard.RoundedImageView
+        android:id="@+id/item_world_thumb"
+        android:layout_width="58dp"
+        android:layout_height="40dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/hero_echo_peaks"
+        app:auroraCornerRadius="8dp" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="11dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/item_world_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/noto_sans_bold"
+                android:maxWidth="220dp"
+                android:singleLine="true"
+                android:text="Echo Peaks"
+                android:textColor="@color/aurora_text_white"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/item_world_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_aurora_badge_pill"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="1.5dp"
+                android:singleLine="true"
+                android:text="WORLD"
+                android:textColor="@color/aurora_teal_bright"
+                android:textSize="8.5sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/item_world_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Survival World • 1.21 • Last played 2h ago"
+            android:textColor="@color/aurora_text_muted"
+            android:textSize="10.5sp" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/item_world_options"
+        android:layout_width="32dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_aurora_more_pill"
+        android:contentDescription="@string/global_edit"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_aurora_more_dots" />
+
+    <ImageButton
+        android:id="@+id/item_world_play"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_aurora_circle_play"
+        android:contentDescription="@string/main_play"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_aurora_play_triangle"
+        android:tint="@color/aurora_teal_bright"
+        tools:ignore="UseAppTint" />
+</LinearLayout>

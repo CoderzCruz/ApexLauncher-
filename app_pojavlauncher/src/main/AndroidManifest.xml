@@ -56,7 +56,8 @@
         <activity
             android:name=".LauncherActivity"
             android:label="@string/app_short_name"
-            android:windowSoftInputMode="adjustResize"/>
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity
             android:name=".ImportControlActivity"
             android:configChanges="keyboard|keyboardHidden"

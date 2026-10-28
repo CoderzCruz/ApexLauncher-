@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:baselineAligned="false">
+
+    <!-- LEFT COLUMN: Player Accounts & Authentication -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_aurora_glass_card"
+        android:orientation="vertical"
+        android:padding="13dp">
+
+        <!-- Active Player Summary -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_aurora_avatar_ring" />
+
+                <net.kdt.pojavlaunch.dashboard.RoundedImageView
+                    android:id="@+id/profile_active_avatar"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_voxel_avatar_default"
+                    app:auroraCircle="true" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="11dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/profile_active_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:singleLine="true"
+                    android:text="Not Signed In"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/profile_active_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="Add a Microsoft or Local account below"
+                    android:textColor="@color/aurora_teal_bright"
+                    android:textSize="10.5sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Add Account Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/btn_profile_add_microsoft"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/bg_aurora_play_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/noto_sans_bold"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="+ Microsoft Login"
+                android:textColor="@color/aurora_text_white"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/btn_profile_add_local"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bg_aurora_more_pill"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="+ Local Account"
+                android:textColor="@color/aurora_text_white"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="Saved Accounts"
+            android:textColor="@color/aurora_text_muted"
+            android:textSize="10.5sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/profile_accounts_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- RIGHT COLUMN: Launcher Tools, Runtimes, Controls & Full Preferences -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.1"
+        android:background="@drawable/bg_aurora_glass_card"
+        android:orientation="vertical"
+        android:padding="13dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_bold"
+            android:text="Launcher Controls &amp; System"
+            android:textColor="@color/aurora_text_white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/profile_system_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Configure video renderer, Java runtimes, custom controls &amp; logs"
+            android:textColor="@color/aurora_text_muted"
+            android:textSize="10.5sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/btn_tool_launcher_settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_aurora_sub_row"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:text="⚙  Launcher Settings (Video, Java, RAM, Renderer)"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="11.5sp" />
+
+                <TextView
+                    android:id="@+id/btn_tool_runtime_manager"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_aurora_sub_row"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:text="☕  Java Runtime Manager (JRE 8 / 17 / 21)"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="11.5sp" />
+
+                <TextView
+                    android:id="@+id/btn_tool_custom_controls"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_aurora_sub_row"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:text="🎮  Custom Touch Controls Editor"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="11.5sp" />
+
+                <TextView
+                    android:id="@+id/btn_tool_gamepad_mapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_aurora_sub_row"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:text="🕹  Controller / Gamepad Key Remapper"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="11.5sp" />
+
+                <TextView
+                    android:id="@+id/btn_tool_install_jar"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_aurora_sub_row"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:text="📦  Execute Mod Installer (.jar) — Hold for Custom Args"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="11.5sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btn_tool_open_dir"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/bg_aurora_sub_row"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="📁 Game Folder"
+                        android:textColor="@color/aurora_text_white"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/btn_tool_share_logs"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp"
+                        android:background="@drawable/bg_aurora_sub_row"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="📤 Share Log"
+                        android:textColor="@color/aurora_text_white"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>

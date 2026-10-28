@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.modloaders.modpacks.ModItemAdapter;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
@@ -100,7 +101,22 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         });
         mFilterButton.setOnClickListener(v -> displayFilterDialog());
 
-        searchMods(null);
+        String initialQuery = null;
+        if (getActivity() instanceof LauncherActivity) {
+            String topQuery = ((LauncherActivity) getActivity()).getCurrentSearchQuery();
+            if (!topQuery.isEmpty()) {
+                initialQuery = topQuery;
+                mSearchEditText.setText(topQuery);
+            }
+        }
+        searchMods(initialQuery);
+    }
+
+    public void applyExternalSearchQuery(String query) {
+        if (!isAdded() || mSearchEditText == null) return;
+        String safe = query == null ? "" : query.trim();
+        mSearchEditText.setText(safe);
+        searchMods(safe);
     }
 
     @Override

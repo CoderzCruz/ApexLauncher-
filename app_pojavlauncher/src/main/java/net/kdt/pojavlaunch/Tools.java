@@ -111,6 +111,7 @@ public final class Tools {
     public static File DIR_CACHE;
     public static String MULTIRT_HOME;
     public static String LOCAL_RENDERER = null;
+    public static String sQuickPlayWorldFolder = null;
     public static int DEVICE_ARCHITECTURE;
     public static final String LAUNCHERPROFILES_RTPREFIX = "pojav://";
 
@@ -342,6 +343,17 @@ public final class Tools {
 
         javaArgList.add(versionInfo.mainClass);
         javaArgList.addAll(Arrays.asList(launchArgs));
+        if (Tools.isValidString(sQuickPlayWorldFolder)) {
+            try {
+                Date relDate = DateUtils.getOriginalReleaseDate(versionInfo);
+                // Minecraft 23w14a (April 5, 2023) introduced --quickPlaySingleplayer
+                if (relDate != null && !DateUtils.dateBefore(relDate, 2023, 3, 5)) {
+                    javaArgList.add("--quickPlaySingleplayer");
+                    javaArgList.add(sQuickPlayWorldFolder);
+                }
+            } catch (Exception ignored) {
+            }
+        }
         // ctx.appendlnToLog("full args: "+javaArgList.toString());
         String args = LauncherPreferences.PREF_CUSTOM_JAVA_ARGS;
         if(Tools.isValidString(minecraftProfile.javaArgs)) args = minecraftProfile.javaArgs;

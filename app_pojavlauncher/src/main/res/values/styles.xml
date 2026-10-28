@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light or not? -->
+    <!-- Aurora Glass Dark AppTheme -->
     <style name="AppTheme" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:statusBarColor">@color/background_status_bar</item>
-        <item name="android:navigationBarColor">@color/background_app</item>
+        <item name="android:windowBackground">@color/aurora_bg_deep</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="colorAccent">@color/aurora_teal_primary</item>
+        <item name="colorControlActivated">@color/aurora_teal_primary</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-
         <item name="android:textSize">@dimen/_12ssp</item>
-
     </style>
 
     <style name="LauncherFragment_Divider">
@@ -30,7 +31,7 @@
     <style name="ThickDivider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/_1sdp</item>
-        <item name="android:background">?android:attr/listDivider</item>
+        <item name="android:background">@color/divider</item>
     </style>
 
     <item name="dimension_tracker" type="id" />

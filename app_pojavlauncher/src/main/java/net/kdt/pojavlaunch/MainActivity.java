@@ -75,6 +75,7 @@ import java.io.IOException;
 public class MainActivity extends BaseActivity implements ControlButtonMenuListener, EditorExitable, ServiceConnection {
     public static volatile ClipboardManager GLOBAL_CLIPBOARD;
     public static final String INTENT_MINECRAFT_VERSION = "intent_version";
+    public static final String INTENT_QUICK_PLAY_WORLD = "intent_quick_play_world";
 
     volatile public static boolean isInputStackCall;
 
@@ -176,6 +177,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
             String version = getIntent().getStringExtra(INTENT_MINECRAFT_VERSION);
             version = version == null ? minecraftProfile.lastVersionId : version;
+            Tools.sQuickPlayWorldFolder = getIntent().getStringExtra(INTENT_QUICK_PLAY_WORLD);
 
             JMinecraftVersionList.Version mVersionInfo = Tools.getVersionInfo(version);
             isInputStackCall = mVersionInfo.arguments != null;
