@@ -37,7 +37,7 @@
             android:paddingHorizontal="@dimen/padding_heavy"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/search_mod_filter"
+            app:layout_constraintEnd_toStartOf="@+id/search_mod_filter"
             tools:ignore="Autofill" />
 
         <ImageButton

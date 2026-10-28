@@ -42,12 +42,13 @@ jobs:
 
       - name: Build GLFW stub, Forge installer, and DNS injector
         run: |
-          ./gradlew :jre_lwjgl3glfw:build :forge_installer:jar :arc_dns_injector:jar --no-daemon
+          ./gradlew :jre_lwjgl3glfw:build :forge_installer:jar :arc_dns_injector:jar --no-daemon 2>&1 | tee /tmp/ci_step.log
 
       - name: Build lightweight APK (without bundled JREs)
         run: |
+          set -o pipefail
           mkdir -p release_apks
-          ./gradlew :app_pojavlauncher:assembleDebug --no-daemon
+          ./gradlew :app_pojavlauncher:assembleDebug --no-daemon --stacktrace 2>&1 | tee /tmp/ci_step.log
           cp app_pojavlauncher/build/outputs/apk/debug/app_pojavlauncher-debug.apk \
              release_apks/ApexLauncher-noruntime.apk
 
@@ -55,14 +56,31 @@ jobs:
         env:
           PACK200_BIN: ${{ env.JAVA_HOME_8_X64 }}/bin/pack200
         run: |
-          ./scripts/fetch_and_repack_jres.sh
+          set -o pipefail
+          ./scripts/fetch_and_repack_jres.sh 2>&1 | tee /tmp/ci_step.log
 
       - name: Build full ApexLauncher Aurora Glass APK
         run: |
-          ./gradlew :app_pojavlauncher:assembleDebug --no-daemon
+          set -o pipefail
+          ./gradlew :app_pojavlauncher:assembleDebug --no-daemon --stacktrace 2>&1 | tee /tmp/ci_step.log
           cp app_pojavlauncher/build/outputs/apk/debug/app_pojavlauncher-debug.apk \
              release_apks/ApexLauncher-AuroraGlass.apk
           ls -lh release_apks/
+
+      - name: Surface failure log in check summary
+        if: failure()
+        run: |
+          if [[ -f /tmp/ci_step.log ]]; then
+            while IFS= read -r errline; do
+              echo "::error title=BuildDiagnostic::${errline}"
+            done < <(grep -E "(error:|Error:|FAILED|Exception|Caused by:|What went wrong)" /tmp/ci_step.log | tail -n 15 || true)
+            {
+              echo "### Last 120 lines of build log"
+              echo '```'
+              tail -n 120 /tmp/ci_step.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Upload full APK artifact
         uses: actions/upload-artifact@v4
