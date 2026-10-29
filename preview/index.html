@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ApexLauncher — UI #02 Abyssal Bioluminescent Ocean Glass (Live Preview)</title>
+<style>
+  :root{
+    --ink:#032229;
+    --aqua:#00F5D4;
+    --aqua-bright:#19FFE6;
+    --text:#FFFFFF;
+    --sub:#D4EEF8;
+    --muted:#94BFD4;
+    --card-border:rgba(103,249,233,.27);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(circle at 50% 0%, #0b2236 0%, #04101d 60%, #01080f 100%);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:#eaf6ff;display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 16px 34px;min-height:100%;
+  }
+  .page-head{text-align:center;max-width:1500px}
+  .page-head h1{font-size:18px;font-weight:800;letter-spacing:-.2px}
+  .page-head h1 span{color:var(--aqua-bright)}
+  .page-head p{font-size:12px;color:#8fb6cc;margin-top:4px}
+
+  /* ---------- phone / dashboard shell ---------- */
+  .device{
+    position:relative;width:min(1500px,97vw);aspect-ratio:16/9;border-radius:22px;overflow:hidden;
+    border:1px solid rgba(120,240,255,.22);
+    box-shadow:0 30px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(0,0,0,.6) inset;
+    background:#04101d;
+  }
+  .wallpaper{
+    position:absolute;inset:0;
+    background:url("../app_pojavlauncher/src/main/res/drawable-nodpi/bg_aurora_dashboard.jpg") center/cover no-repeat;
+  }
+  .glaze{position:absolute;inset:0;background:rgba(2,19,32,.157)}
+  .shell{
+    position:absolute;inset:0;padding:10px 16px;display:flex;flex-direction:column;gap:10px;
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar-row{display:flex;align-items:center;gap:10px;height:44px;flex:0 0 44px}
+  .topbar{
+    flex:1;height:44px;display:flex;align-items:center;padding:0 6px 0 14px;
+    border-radius:999px;border:1px solid rgba(103,249,233,.24);
+    background:linear-gradient(90deg,rgba(8,32,54,.68),rgba(10,38,64,.64) 50%,rgba(7,27,47,.68));
+    backdrop-filter:blur(22px) saturate(155%);
+    -webkit-backdrop-filter:blur(22px) saturate(155%);
+  }
+  .brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+  .brand svg{width:26px;height:26px;filter:drop-shadow(0 0 8px rgba(0,245,212,.55))}
+  .brand b{font-size:15px;font-weight:700;color:#fff}
+  .search{
+    margin-left:auto;width:39%;height:32px;border-radius:999px;display:flex;align-items:center;gap:8px;
+    padding:0 8px 0 12px;background:rgba(5,22,38,.5);border:1.1px solid rgba(25,255,230,.42);
+    backdrop-filter:blur(16px);
+  }
+  .search svg{width:15px;height:15px;opacity:.75}
+  .search span{font-size:12px;color:rgba(184,234,232,.6)}
+  .avatar{position:relative;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(6,35,56,.4);border:1.6px solid rgba(41,255,232,.65);cursor:pointer;
+    box-shadow:0 0 16px rgba(0,245,212,.25)}
+  .avatar .face{width:39px;height:39px;border-radius:50%;background:
+    radial-gradient(circle at 50% 32%, #9fe9ff 0 18%, #4db3c9 19% 30%, transparent 31%),
+    linear-gradient(180deg,#0f5d70,#083d4d);}
+  .avatar .dot{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;
+    background:#00F5A0;border:1.8px solid #041e2e;box-shadow:0 0 8px rgba(0,245,160,.8)}
+
+  /* ---------- body ---------- */
+  .body{flex:1;display:flex;gap:8px;min-height:0}
+
+  /* orb rail */
+  .rail{width:124px;display:flex;flex-direction:column;justify-content:space-between;padding:2px 0;flex:0 0 124px}
+  .orb-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding-right:4px}
+  .orb{
+    width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:0 0 42px;
+    background:linear-gradient(180deg,rgba(11,36,60,.58),rgba(7,24,43,.65));
+    border:1px solid rgba(112,248,234,.24);
+    backdrop-filter:blur(14px);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .orb svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .orb-row:hover .orb{transform:translateY(-1px);box-shadow:0 0 18px rgba(0,245,212,.35)}
+  .orb-row span{font-size:12px;color:var(--sub);white-space:nowrap}
+  .orb-row.active .orb{
+    background:radial-gradient(circle at 50% 30%, #3BFFEE, #00E0C0 78%);
+    border:1.2px solid #BAFFFA;
+    box-shadow:0 0 0 3px rgba(0,245,212,.18), 0 0 26px rgba(0,245,212,.6);
+  }
+  .orb-row.active .orb svg{stroke:#032229;stroke-width:1.9}
+  .orb-row.active span{color:var(--aqua-bright);font-weight:700}
+
+  /* content */
+  .content{flex:1;display:flex;gap:12px;min-width:0}
+
+  .glass{
+    border-radius:20px;border:1.1px solid var(--card-border);
+    background:linear-gradient(135deg,rgba(9,35,59,.70),rgba(7,27,46,.74) 46%,rgba(5,19,34,.78));
+    backdrop-filter:blur(26px) saturate(150%);
+    -webkit-backdrop-filter:blur(26px) saturate(150%);
+    box-shadow:0 18px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.10);
+  }
+
+  /* hero */
+  .hero{
+    flex:1.35;position:relative;padding:3.5px;display:flex;min-width:0;overflow:hidden;
+  }
+  .hero-art{position:absolute;inset:3.5px;border-radius:18px;overflow:hidden}
+  .hero-art img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero-art::after{content:"";position:absolute;inset:0;border-radius:18px;
+    background:linear-gradient(180deg,rgba(3,27,40,.02),rgba(4,32,50,.27) 55%,rgba(3,22,36,.92));}
+  .hero-inner{position:relative;z-index:2;flex:1;padding:15px;display:flex}
+  .chip{
+    position:absolute;top:15px;right:15px;font-size:10.5px;padding:4px 10px;border-radius:12px;color:#fff;
+    background:rgba(7,37,59,.55);border:1px solid rgba(111,254,242,.35);backdrop-filter:blur(12px);
+  }
+  .hero-copy{margin-top:auto;max-width:74%}
+  .badge{
+    display:inline-block;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--aqua-bright);padding:3px 10px;border-radius:999px;margin-bottom:5px;
+    background:rgba(7,37,56,.55);border:1px solid rgba(41,255,232,.4);
+  }
+  .hero h2{font-size:22.5px;font-weight:800;line-height:1.1;letter-spacing:-.3px;
+    text-shadow:0 2px 18px rgba(0,0,0,.6)}
+  .hero p{font-size:11.5px;line-height:1.35;color:var(--sub);margin-top:4px;max-width:92%;
+    text-shadow:0 1px 10px rgba(0,0,0,.65)}
+  .more{
+    margin-top:10px;width:38px;height:23px;border-radius:12px;display:grid;place-items:center;gap:2px;
+    background:rgba(7,37,59,.55);border:1px solid rgba(111,254,242,.35);color:#cdeff0;font-size:12px;letter-spacing:1px;
+  }
+  .play{
+    position:absolute;right:15px;bottom:15px;height:46px;min-width:136px;padding:0 22px;border-radius:17px;
+    display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
+    background:linear-gradient(90deg,#3BFFEE,#00E5C3);
+    border:1.2px solid #BFFFFA;color:var(--ink);font-weight:800;font-size:14.5px;letter-spacing:.06em;
+    box-shadow:0 0 0 3px rgba(0,245,212,.18), 0 0 34px rgba(0,245,212,.55), 0 10px 24px rgba(0,0,0,.45);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .play:hover{transform:translateY(-1px);box-shadow:0 0 0 4px rgba(0,245,212,.22),0 0 44px rgba(0,245,212,.7),0 12px 26px rgba(0,0,0,.5)}
+  .play svg{width:15px;height:15px;fill:var(--ink)}
+
+  /* right column */
+  .col{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+
+  .telemetry{flex:1.02;display:flex;flex-direction:column;justify-content:center;padding:7px 12px;gap:2px}
+  .stats{display:flex;flex:1;align-items:center}
+  .stat{flex:1;display:grid;place-items:center;height:100%;border-radius:12px;cursor:pointer;transition:background .15s}
+  .stat:hover{background:rgba(0,245,212,.12)}
+  .stat svg{width:27px;height:27px}
+  .summary{font-size:10.5px;font-weight:700;text-align:center;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .recent{flex:1.52;padding:8px 13px;display:flex;flex-direction:column}
+  .recent-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .recent-head b{font-size:11.5px;font-weight:700}
+  .recent-head i{font-style:normal;font-size:10.5px;color:#47F7E5;cursor:pointer}
+  .row{flex:1;display:flex;align-items:center;gap:9px;border-radius:12px;padding:0 2px;cursor:pointer;transition:background .15s}
+  .row:hover{background:rgba(0,245,212,.10)}
+  .row img{width:42px;height:30px;border-radius:7px;object-fit:cover;flex:0 0 42px;
+    box-shadow:0 0 0 1px rgba(41,255,232,.35), 0 4px 12px rgba(0,0,0,.45)}
+  .row .txt{flex:1;min-width:0}
+  .row .txt b{display:block;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .txt small{font-size:9.5px;color:var(--muted)}
+  .mini-play{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;flex:0 0 27px;
+    background:rgba(0,245,212,.20);border:1px solid rgba(41,255,232,.4)}
+  .mini-play svg{width:11px;height:11px;fill:var(--aqua-bright);margin-left:1px}
+
+  /* wave progress card */
+  .wave-card{flex:.96;position:relative;overflow:hidden;padding:8px 12px;cursor:pointer}
+  .wave-card svg.waves{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .wave-copy{position:relative;z-index:2;display:flex;flex-direction:column;gap:1px}
+  .wave-copy b{font-size:11px;font-weight:700;text-shadow:0 1px 4px rgba(2,20,32,.75)}
+  .wave-copy small{font-size:9px;color:rgba(226,250,255,.85);text-shadow:0 1px 3px rgba(2,20,32,.75)}
+
+  .foot-notes{max-width:1500px;width:min(1500px,97vw);display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:11.5px;color:#8fb6cc}
+  .pill{background:rgba(0,245,212,.10);border:1px solid rgba(0,245,212,.32);color:#7ef9f0;border-radius:999px;padding:6px 14px;font-weight:700}
+
+  @media (max-width:900px){
+    .device{aspect-ratio:auto;min-height:620px}
+    .rail{width:70px;flex:0 0 70px}
+    .orb-row span{display:none}
+    .hero-copy{max-width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>ApexLauncher · UI <span>#02</span> — Abyssal Bioluminescent Ocean Glass</h1>
+  <p>Live browser preview of the exact dashboard shipped in the APK build (Atlantis Depths hero, 5-orb bioluminescent rail, ocean-wave progress card).</p>
+</div>
+
+<div class="device">
+  <div class="wallpaper"></div>
+  <div class="glaze"></div>
+
+  <div class="shell">
+    <!-- TOP BAR -->
+    <div class="topbar-row">
+      <div class="topbar">
+        <div class="brand">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 3 L28 9.8 L16 16.6 L4 9.8 Z" fill="#47FFEF"/>
+            <path d="M4 9.8 L15.2 16.2 L15.2 29 L4 22.4 Z" fill="#00F5D4"/>
+            <path d="M16.8 16.2 L28 9.8 L28 22.4 L16.8 29 Z" fill="#06B6D4"/>
+            <path d="M15.3 16 L16.7 16 L16.7 29.2 L15.3 29.2 Z" fill="#042430"/>
+          </svg>
+          <b>ApexLauncher</b>
+        </div>
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#B35FFBF1" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/>
+          </svg>
+          <span>Search worlds...</span>
+        </div>
+      </div>
+
+      <div class="avatar" title="Player accounts">
+        <div class="face"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="body">
+      <!-- 5 ORB RAIL -->
+      <div class="rail">
+        <div class="orb-row active">
+          <div class="orb">
+            <svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1Z"/></svg>
+          </div><span>Home</span>
+        </div>
+        <div class="orb-row">
+          <div class="orb">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M4 12h16M12 3.8c2.4 2.3 3.6 5 3.6 8.2s-1.2 5.9-3.6 8.2c-2.4-2.3-3.6-5-3.6-8.2S9.6 6.1 12 3.8Z"/></svg>
+          </div><span>Worlds</span>
+        </div>
+        <div class="orb-row">
+          <div class="orb">
+            <svg viewBox="0 0 24 24"><path d="M12 3 20 7.5v9L12 21 4 16.5v-9Z"/><path d="M12 12 20 7.5M12 12 4 7.5M12 12v9"/></svg>
+          </div><span>Mods</span>
+        </div>
+        <div class="orb-row">
+          <div class="orb">
+            <svg viewBox="0 0 24 24"><path d="M10 3.5c2 2-1.5 3.5.5 5.5M14 4.5c1.5 1.5-1 3 .5 4.5M7 12h9c-.2 3.5-2 5.2-4.5 5.2S7.2 15.5 7 12Z"/><path d="M5.5 20h13"/></svg>
+          </div><span>Java</span>
+        </div>
+        <div class="orb-row">
+          <div class="orb">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 8.9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 8.9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
+          </div><span>Settings</span>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <!-- HERO -->
+        <div class="glass hero">
+          <div class="hero-art">
+            <img src="../app_pojavlauncher/src/main/res/drawable-nodpi/hero_echo_peaks.jpg" alt="Atlantis Depths" />
+          </div>
+          <div class="hero-inner">
+            <div class="chip">Latest Release ▾</div>
+            <div class="hero-copy">
+              <div class="badge">Iris Shaders • Latest Release</div>
+              <h2>Atlantis Depths</h2>
+              <p>Submerge into glowing coral canyons<br/>and ancient sea-lantern ruins.</p>
+              <div class="more">•••</div>
+            </div>
+            <div class="play">
+              <svg viewBox="0 0 24 24"><path d="M7 5.2c0-1 1.1-1.6 2-1.1l10.2 6.8c.8.5.8 1.7 0 2.2L9 19.9c-.9.5-2-.1-2-1.1Z"/></svg>
+              PLAY
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col">
+          <!-- telemetry -->
+          <div class="glass telemetry">
+            <div class="stats">
+              <div class="stat" title="Player account">
+                <svg viewBox="0 0 28 28">
+                  <circle cx="19.5" cy="11.5" r="3" fill="#6629FFE8"/>
+                  <path d="M15 21.5c0-3.3 2-5 4.8-5s4.7 1.7 4.7 5Z" fill="#5529FFE8"/>
+                  <circle cx="11" cy="10.5" r="3.8" fill="#29FFE8"/>
+                  <path d="M4.5 22c0-4 2.8-6 6.5-6s6.5 2 6.5 6Z" fill="#00E5C4"/>
+                </svg>
+              </div>
+              <div class="stat" title="Java runtime">
+                <svg viewBox="0 0 28 28">
+                  <path d="M14 3.5c3.5 3.3-2.2 5.5 1.2 9-4-1.5-4.4-5.3-1.2-9Z" fill="#FB7185"/>
+                  <path d="M17.5 6.5c2 2-1 3.5.7 5.7-2.4-1-2.6-3.4-.7-5.7Z" fill="#FDBA74"/>
+                  <path d="M8 14h11.5c-.4 4.2-2.7 6.2-5.7 6.2S8.5 18.2 8 14Z" fill="#99D8EC"/>
+                  <path d="M6.5 21.5h15v2h-15z" fill="#00F5D4"/>
+                </svg>
+              </div>
+              <div class="stat" title="Allocated RAM">
+                <svg viewBox="0 0 28 28">
+                  <path d="M7 5h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="#19FFE6"/>
+                  <path d="M9 8.5h7v7H9Zm9.5 0H20V17h-1.5ZM9 18.5h2V21H9Zm3.5 0h2V21h-2Zm3.5 0h2V21h-2Z" fill="#052333"/>
+                </svg>
+              </div>
+            </div>
+            <div class="summary">Steve Online • OpenJDK 21 • 4 GB RAM</div>
+          </div>
+
+          <!-- continue exploring -->
+          <div class="glass recent">
+            <div class="recent-head">
+              <b>Continue Exploring</b>
+              <i>View all</i>
+            </div>
+            <div class="row">
+              <img src="../app_pojavlauncher/src/main/res/drawable-nodpi/thumb_skyblock_odyssey.jpg" alt="Coral Caverns"/>
+              <div class="txt"><b>Coral Caverns</b><small>Last played 2h ago</small></div>
+              <div class="mini-play"><svg viewBox="0 0 24 24"><path d="M7 5.2c0-1 1.1-1.6 2-1.1l10.2 6.8c.8.5.8 1.7 0 2.2L9 19.9c-.9.5-2-.1-2-1.1Z"/></svg></div>
+            </div>
+            <div class="row">
+              <img src="../app_pojavlauncher/src/main/res/drawable-nodpi/thumb_caves_cliffs.jpg" alt="Abyssal Rift"/>
+              <div class="txt"><b>Abyssal Rift</b><small>Last played 1d ago</small></div>
+              <div class="mini-play"><svg viewBox="0 0 24 24"><path d="M7 5.2c0-1 1.1-1.6 2-1.1l10.2 6.8c.8.5.8 1.7 0 2.2L9 19.9c-.9.5-2-.1-2-1.1Z"/></svg></div>
+            </div>
+          </div>
+
+          <!-- wave progress -->
+          <div class="glass wave-card">
+            <svg class="waves" viewBox="0 0 300 90" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="backG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#00E5C4" stop-opacity=".40"/>
+                  <stop offset="1" stop-color="#056676" stop-opacity=".22"/>
+                </linearGradient>
+                <linearGradient id="frontG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#2EFFE9" stop-opacity=".85"/>
+                  <stop offset="1" stop-color="#009E91" stop-opacity=".70"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#backG)">
+                <animate attributeName="d" dur="7s" repeatCount="indefinite"
+                  values="M0,52 C25,46 50,58 75,52 C100,46 125,58 150,52 C175,46 200,58 225,52 C250,46 275,58 300,52 L300,90 L0,90 Z;
+                          M0,52 C25,58 50,46 75,52 C100,58 125,46 150,52 C175,58 200,46 225,52 C250,58 275,46 300,52 L300,90 L0,90 Z;
+                          M0,52 C25,46 50,58 75,52 C100,46 125,58 150,52 C175,46 200,58 225,52 C250,46 275,58 300,52 L300,90 L0,90 Z"/>
+              </path>
+              <path fill="url(#frontG)">
+                <animate attributeName="d" dur="5s" repeatCount="indefinite"
+                  values="M0,64 C30,56 60,72 90,64 C120,56 150,72 180,64 C210,56 240,72 270,64 C285,60 292,62 300,64 L300,90 L0,90 Z;
+                          M0,64 C30,72 60,56 90,64 C120,72 150,56 180,64 C210,72 240,56 270,64 C285,68 292,66 300,64 L300,90 L0,90 Z;
+                          M0,64 C30,56 60,72 90,64 C120,56 150,72 180,64 C210,56 240,72 270,64 C285,60 292,62 300,64 L300,90 L0,90 Z"/>
+              </path>
+              <path fill="none" stroke="#A5FFF8" stroke-opacity=".9" stroke-width="1.1">
+                <animate attributeName="d" dur="5s" repeatCount="indefinite"
+                  values="M0,64 C30,56 60,72 90,64 C120,56 150,72 180,64 C210,56 240,72 270,64 C285,60 292,62 300,64;
+                          M0,64 C30,72 60,56 90,64 C120,72 150,56 180,64 C210,72 240,56 270,64 C285,68 292,66 300,64;
+                          M0,64 C30,56 60,72 90,64 C120,56 150,72 180,64 C210,56 240,72 270,64 C285,60 292,62 300,64"/>
+              </path>
+            </svg>
+            <div class="wave-copy">
+              <b>World Files Ready • 100%</b>
+              <small>Latest Release verified (25 MB client)</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot-notes">
+  <span class="pill">Landscape 16:9 dashboard</span>
+  <span class="pill">Real account / OpenJDK / RAM data</span>
+  <span class="pill">Live download wave progress</span>
+  <span class="pill">APK: ApexLauncher-AbyssalOceanGlass.apk</span>
+</div>
+
+</body>
+</html>
