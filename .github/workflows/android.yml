@@ -59,13 +59,13 @@ jobs:
           set -o pipefail
           ./scripts/fetch_and_repack_jres.sh 2>&1 | tee /tmp/ci_step.log
 
-      - name: Build full ApexLauncher Abyssal Bioluminescent Ocean Glass APK
+      - name: Build full ApexLauncher Your Space APK
         run: |
           set -o pipefail
           ./gradlew :app_pojavlauncher:assembleDebug --no-daemon --stacktrace 2>&1 | tee /tmp/ci_step.log
           cp app_pojavlauncher/build/outputs/apk/debug/app_pojavlauncher-debug.apk \
-             release_apks/ApexLauncher-AbyssalOceanGlass.apk
-          cp release_apks/ApexLauncher-AbyssalOceanGlass.apk \
+             release_apks/ApexLauncher-YourSpace.apk
+          cp release_apks/ApexLauncher-YourSpace.apk \
              release_apks/ApexLauncher-AuroraGlass.apk
           ls -lh release_apks/
 
@@ -87,8 +87,8 @@ jobs:
       - name: Upload full APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ApexLauncher-AbyssalOceanGlass-APK
-          path: release_apks/ApexLauncher-AbyssalOceanGlass.apk
+          name: ApexLauncher-YourSpace-APK
+          path: release_apks/ApexLauncher-YourSpace.apk
 
       - name: Upload lightweight no-runtime APK artifact
         uses: actions/upload-artifact@v4
@@ -101,28 +101,28 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="abyssal-ocean-latest"
+          TAG="your-space-latest"
           SHORT_SHA="${GITHUB_SHA::7}"
-          NOTES="Automated **ApexLauncher — UI #02: Abyssal Bioluminescent Ocean Glass** build from branch \`${GITHUB_REF_NAME}\` (commit \`${SHORT_SHA}\`).
+          NOTES="Automated **ApexLauncher — Your Space Dashboard (mint glass UI)** build from branch \`${GITHUB_REF_NAME}\` (commit \`${SHORT_SHA}\`).
 
           ### Direct APK Downloads
-          - **ApexLauncher-AbyssalOceanGlass.apk** — Full ready-to-install APK including OpenJDK 8, 17, and 21 runtimes for all Minecraft versions.
+          - **ApexLauncher-YourSpace.apk** — Full ready-to-install APK including OpenJDK 8, 17, and 21 runtimes for all Minecraft versions.
           - **ApexLauncher-noruntime.apk** — Lightweight APK without bundled Java runtimes."
 
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release edit "$TAG" \
-              --title "ApexLauncher — Abyssal Bioluminescent Ocean Glass UI (${SHORT_SHA})" \
+              --title "ApexLauncher — Your Space UI (${SHORT_SHA})" \
               --notes "$NOTES"
             gh release upload "$TAG" \
-              release_apks/ApexLauncher-AbyssalOceanGlass.apk \
+              release_apks/ApexLauncher-YourSpace.apk \
               release_apks/ApexLauncher-noruntime.apk \
               --clobber
           else
             gh release create "$TAG" \
-              release_apks/ApexLauncher-AbyssalOceanGlass.apk \
+              release_apks/ApexLauncher-YourSpace.apk \
               release_apks/ApexLauncher-noruntime.apk \
               --target "${GITHUB_SHA}" \
-              --title "ApexLauncher — Abyssal Bioluminescent Ocean Glass UI (${SHORT_SHA})" \
+              --title "ApexLauncher — Your Space UI (${SHORT_SHA})" \
               --notes "$NOTES"
           fi
 

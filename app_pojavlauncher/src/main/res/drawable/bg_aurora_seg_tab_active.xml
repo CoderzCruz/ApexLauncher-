@@ -1,38 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
-        <layer-list>
-            <!-- Soft outer bioluminescent aqua glow -->
-            <item>
-                <shape android:shape="rectangle">
-                    <corners android:radius="999dp" />
-                    <solid android:color="#4500F5D4" />
-                </shape>
-            </item>
-            <!-- Crisp glowing aqua active pill -->
-            <item
-                android:left="1dp"
-                android:top="1dp"
-                android:right="1dp"
-                android:bottom="1dp">
-                <shape android:shape="rectangle">
-                    <corners android:radius="999dp" />
-                    <gradient
-                        android:angle="90"
-                        android:startColor="#7300C9B7"
-                        android:endColor="#9900F5D4"
-                        android:type="linear" />
-                    <stroke
-                        android:width="1.4dp"
-                        android:color="#8AFEF7" />
-                </shape>
-            </item>
-        </layer-list>
+        <shape android:shape="rectangle">
+            <corners android:radius="999dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#7DE8D0"
+                android:endColor="#5FDCC2"
+                android:type="linear" />
+            <stroke
+                android:width="1dp"
+                android:color="#8AFFFFFF" />
+        </shape>
     </item>
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="999dp" />
-            <solid android:color="#2600F5D4" />
+            <solid android:color="#267DE8D0" />
         </shape>
     </item>
     <item>

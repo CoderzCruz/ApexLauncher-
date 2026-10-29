@@ -432,23 +432,43 @@
     <string name="newdl_extracting_native_libraries">Extracting native libraries (%d/%d)</string>
     <string name="toast_not_available_demo">This is not available in demo mode</string>
 
-    <!-- Abyssal Bioluminescent Ocean Glass (#02) Dashboard Strings -->
+    <!-- Your Space Dashboard Strings -->
     <string name="aurora_brand_title">ApexLauncher</string>
     <string name="aurora_search_worlds_hint">Search worlds...</string>
+    <string name="aurora_page_title">YOUR SPACE</string>
     <string name="aurora_nav_home">Home</string>
     <string name="aurora_nav_worlds">Worlds</string>
     <string name="aurora_nav_marketplace">Marketplace</string>
     <string name="aurora_nav_mods">Mods</string>
     <string name="aurora_nav_java">Java</string>
     <string name="aurora_nav_settings">Settings</string>
-    <string name="aurora_nav_profile">Profile</string>
-    <string name="aurora_featured_world_badge">IRIS SHADERS • 1.21.4</string>
+    <string name="aurora_nav_accounts">Accounts</string>
+    <string name="aurora_nav_create">Create instance</string>
+    <string name="aurora_nav_library">Your library</string>
+    <string name="aurora_nav_explore">Explore content</string>
+    <string name="aurora_nav_install">Install jar or modpack</string>
+
+    <string name="aurora_quick_create_title">Create instance</string>
+    <string name="aurora_quick_create_sub">Vanilla or modded</string>
+    <string name="aurora_quick_explore_title">Explore content</string>
+    <string name="aurora_quick_explore_sub">Loaders and modpacks</string>
+    <string name="aurora_quick_library_title">Your library</string>
+    <string name="aurora_quick_library_sub">%1$d instance(s)</string>
+
+    <string name="aurora_active_world_label">ACTIVE WORLD</string>
+    <string name="aurora_active_world_sub">Your selected game instance</string>
+    <string name="aurora_play">Play</string>
     <string name="aurora_play_upper">PLAY</string>
+    <string name="aurora_add_account">+ Add Account</string>
+    <string name="aurora_tasks_title">Tasks</string>
+    <string name="aurora_tasks_idle">Nothing running</string>
+
+    <string name="aurora_featured_world_badge">FEATURED WORLD</string>
     <string name="aurora_recently_played">Continue Exploring</string>
     <string name="aurora_view_all">View all</string>
     <string name="aurora_updating_world_files">Updating World Files</string>
     <string name="aurora_world_files_ready">World Files Ready</string>
-    <string name="aurora_default_world_title">Atlantis Depths</string>
+    <string name="aurora_default_world_title">Latest Release</string>
     <string name="aurora_default_world_desc">A tranquil voxel adventure\nsurrounded by mystery.</string>
     <string name="aurora_import_world_zip">Import World (.zip)</string>
     <string name="aurora_worlds_header">Worlds &amp; Instances</string>

@@ -6,423 +6,389 @@
     android:layout_height="match_parent"
     android:background="@color/aurora_bg_deep">
 
-    <!-- Full-bleed Abyssal Bioluminescent Ocean Wallpaper -->
+    <!-- Full-bleed enchanted voxel forest wallpaper -->
     <ImageView
         android:id="@+id/aurora_bg_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:importantForAccessibility="no"
         android:scaleType="centerCrop"
-        android:src="@drawable/bg_aurora_dashboard"
-        android:importantForAccessibility="no" />
+        android:src="@drawable/bg_aurora_dashboard" />
 
-    <!-- Subtle abyssal ocean glaze for crisp glass legibility -->
+    <!-- Deep glaze for glass legibility -->
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#28021320" />
+        android:background="#33091011" />
+
+    <!-- Vignette on the left so the icon rail reads crisply -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_rail_vignette" />
 
     <!-- Safe-inset Dashboard Shell -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/aurora_safe_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="12dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
-        <!-- TOP ABYSSAL GLASS HEADER PILL -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/aurora_top_bar"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/bg_aurora_header_pill"
-            android:paddingStart="14dp"
-            android:paddingEnd="6dp"
-            app:layout_constraintTop_toTopOf="parent"
+        <!-- ===================== LEFT ICON RAIL ===================== -->
+        <LinearLayout
+            android:id="@+id/aurora_side_rail"
+            android:layout_width="58dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_side_rail"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingVertical="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/aurora_avatar_container">
-
-            <ImageView
-                android:id="@+id/aurora_brand_logo"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:src="@drawable/ic_voxel_cube_logo"
-                android:contentDescription="@string/app_short_name"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/aurora_brand_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:id="@+id/aurora_brand_logo"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_logo_badge"
+                android:clickable="true"
+                android:contentDescription="@string/aurora_brand_title"
+                android:focusable="true"
                 android:fontFamily="@font/noto_sans_bold"
-                android:text="@string/aurora_brand_title"
-                android:textColor="@color/aurora_text_white"
-                android:textSize="15sp"
-                app:layout_constraintStart_toEndOf="@id/aurora_brand_logo"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-            <!-- Contextual Back Pill shown when viewing sub-screens -->
-            <LinearLayout
-                android:id="@+id/aurora_back_chip"
-                android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/bg_aurora_more_pill"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@id/aurora_brand_title"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/ic_arrow_back_white"
-                    android:importantForAccessibility="no" />
-
-                <TextView
-                    android:id="@+id/aurora_back_chip_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="Back"
-                    android:textColor="@color/aurora_text_white"
-                    android:textSize="11.5sp" />
-            </LinearLayout>
-
-            <!-- Search Worlds Bioluminescent Glass Input Pill -->
-            <LinearLayout
-                android:id="@+id/aurora_search_container"
-                android:layout_width="0dp"
-                android:layout_height="32dp"
-                android:background="@drawable/bg_aurora_search_pill"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="12dp"
-                android:paddingEnd="8dp"
-                app:layout_constraintWidth_percent="0.39"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/ic_aurora_search"
-                    android:tint="#B35FFBF1"
-                    android:importantForAccessibility="no"
-                    tools:ignore="UseAppTint" />
-
-                <EditText
-                    android:id="@+id/aurora_search_input"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:hint="@string/aurora_search_worlds_hint"
-                    android:imeOptions="actionSearch|flagNoExtractUi"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="4dp"
-                    android:singleLine="true"
-                    android:textColor="@color/aurora_text_white"
-                    android:textColorHint="#99B8EAE8"
-                    android:textSize="12sp"
-                    tools:ignore="Autofill" />
-
-                <ImageButton
-                    android:id="@+id/aurora_search_clear"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="2dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_aurora_close"
-                    android:visibility="gone"
-                    android:contentDescription="@android:string/cancel" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- TOP-RIGHT CIRCULAR PLAYER AVATAR + ONLINE STATUS DOT -->
-        <FrameLayout
-            android:id="@+id/aurora_avatar_container"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/aurora_top_bar"
-            app:layout_constraintBottom_toBottomOf="@id/aurora_top_bar">
+                android:gravity="center"
+                android:text="A"
+                android:textColor="@color/aurora_mint_primary"
+                android:textSize="17sp" />
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_aurora_avatar_ring" />
+                android:layout_width="22dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="#26FFFFFF" />
 
-            <net.kdt.pojavlaunch.dashboard.RoundedImageView
-                android:id="@+id/aurora_avatar_image"
-                android:layout_width="39dp"
-                android:layout_height="39dp"
-                android:layout_gravity="center"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_voxel_avatar_default"
-                app:auroraCircle="true" />
-
-            <View
-                android:id="@+id/aurora_avatar_status_dot"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_gravity="bottom|end"
-                android:background="@drawable/bg_aurora_status_dot" />
-        </FrameLayout>
-
-        <!-- LEFT FLOATING 5-ORB NAVIGATION RAIL (Home, Worlds, Mods, Java, Settings) -->
-        <LinearLayout
-            android:id="@+id/aurora_nav_rail"
-            android:layout_width="124dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/transparent"
-            android:orientation="vertical"
-            android:paddingVertical="2dp"
-            android:weightSum="5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/aurora_top_bar"
-            app:layout_constraintBottom_toTopOf="@+id/progress_layout">
-
-            <!-- Orb 1: Home -->
-            <LinearLayout
-                android:id="@+id/aurora_nav_home"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="6dp"
                 android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="2dp"
-                android:paddingEnd="4dp">
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-                <FrameLayout
-                    android:id="@+id/aurora_nav_home_orb"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/bg_abyssal_orb_selector"
-                    android:duplicateParentState="false">
-
-                    <ImageView
-                        android:id="@+id/aurora_nav_home_icon"
-                        android:layout_width="19dp"
-                        android:layout_height="19dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_aurora_home"
-                        android:importantForAccessibility="no" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/aurora_nav_home_label"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:singleLine="true"
-                    android:text="@string/aurora_nav_home"
-                    android:textColor="@color/aurora_teal_bright"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
-            <!-- Orb 2: Worlds -->
-            <LinearLayout
-                android:id="@+id/aurora_nav_worlds"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="2dp"
-                android:paddingEnd="4dp">
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_home"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_home"
+                        android:focusable="true">
 
-                <FrameLayout
-                    android:id="@+id/aurora_nav_worlds_orb"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/bg_abyssal_orb_selector"
-                    android:duplicateParentState="false">
+                        <ImageView
+                            android:id="@+id/aurora_nav_home_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_home" />
+                    </FrameLayout>
 
-                    <ImageView
-                        android:id="@+id/aurora_nav_worlds_icon"
-                        android:layout_width="19dp"
-                        android:layout_height="19dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_aurora_worlds"
-                        android:importantForAccessibility="no" />
-                </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_create"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_create"
+                        android:focusable="true">
 
-                <TextView
-                    android:id="@+id/aurora_nav_worlds_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:singleLine="true"
-                    android:text="@string/aurora_nav_worlds"
-                    android:textColor="@color/aurora_text_white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                        <ImageView
+                            android:id="@+id/aurora_nav_create_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_plus" />
+                    </FrameLayout>
 
-            <!-- Orb 3: Mods -->
-            <LinearLayout
-                android:id="@+id/aurora_nav_marketplace"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="2dp"
-                android:paddingEnd="4dp">
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_library"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_library"
+                        android:focusable="true">
 
-                <FrameLayout
-                    android:id="@+id/aurora_nav_marketplace_orb"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/bg_abyssal_orb_selector"
-                    android:duplicateParentState="false">
+                        <ImageView
+                            android:id="@+id/aurora_nav_library_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_grid" />
+                    </FrameLayout>
 
-                    <ImageView
-                        android:id="@+id/aurora_nav_marketplace_icon"
-                        android:layout_width="19dp"
-                        android:layout_height="19dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_abyssal_mods_cube"
-                        android:importantForAccessibility="no" />
-                </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_explore"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_explore"
+                        android:focusable="true">
 
-                <TextView
-                    android:id="@+id/aurora_nav_marketplace_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:singleLine="true"
-                    android:text="@string/aurora_nav_mods"
-                    android:textColor="@color/aurora_text_white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                        <ImageView
+                            android:id="@+id/aurora_nav_explore_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_globe" />
+                    </FrameLayout>
 
-            <!-- Orb 4: Java -->
-            <LinearLayout
-                android:id="@+id/aurora_nav_java"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="2dp"
-                android:paddingEnd="4dp">
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_runtime"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_java"
+                        android:focusable="true">
 
-                <FrameLayout
-                    android:id="@+id/aurora_nav_java_orb"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/bg_abyssal_orb_selector"
-                    android:duplicateParentState="false">
+                        <ImageView
+                            android:id="@+id/aurora_nav_runtime_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_rocket" />
+                    </FrameLayout>
 
-                    <ImageView
-                        android:id="@+id/aurora_nav_java_icon"
-                        android:layout_width="19dp"
-                        android:layout_height="19dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_abyssal_java"
-                        android:importantForAccessibility="no" />
-                </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_install"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_install"
+                        android:focusable="true">
 
-                <TextView
-                    android:id="@+id/aurora_nav_java_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:singleLine="true"
-                    android:text="@string/aurora_nav_java"
-                    android:textColor="@color/aurora_text_white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                        <ImageView
+                            android:id="@+id/aurora_nav_install_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_install" />
+                    </FrameLayout>
 
-            <!-- Orb 5: Settings -->
-            <LinearLayout
-                android:id="@+id/aurora_nav_profile"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="2dp"
-                android:paddingEnd="4dp">
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_settings"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_settings"
+                        android:focusable="true">
 
-                <FrameLayout
-                    android:id="@+id/aurora_nav_profile_orb"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:background="@drawable/bg_abyssal_orb_selector"
-                    android:duplicateParentState="false">
+                        <ImageView
+                            android:id="@+id/aurora_nav_settings_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_gear" />
+                    </FrameLayout>
 
-                    <ImageView
-                        android:id="@+id/aurora_nav_profile_icon"
-                        android:layout_width="19dp"
-                        android:layout_height="19dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_abyssal_settings"
-                        android:importantForAccessibility="no" />
-                </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/aurora_nav_accounts"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_rail_item_selector"
+                        android:clickable="true"
+                        android:contentDescription="@string/aurora_nav_accounts"
+                        android:focusable="true">
 
-                <TextView
-                    android:id="@+id/aurora_nav_profile_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:singleLine="true"
-                    android:text="@string/aurora_nav_settings"
-                    android:textColor="@color/aurora_text_white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                        <ImageView
+                            android:id="@+id/aurora_nav_accounts_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_rail_people" />
+                    </FrameLayout>
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
 
-        <!-- MAIN DYNAMIC DASHBOARD CONTENT CONTAINER -->
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/container_fragment"
+        <!-- ===================== CONTENT AREA ===================== -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/aurora_content_root"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintStart_toEndOf="@id/aurora_nav_rail"
+            android:layout_marginStart="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/aurora_top_bar"
-            app:layout_constraintBottom_toTopOf="@+id/progress_layout" />
+            app:layout_constraintStart_toEndOf="@id/aurora_side_rail"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Global ProgressLayout (shown on non-Home screens during background tasks) -->
-        <com.kdt.mcgui.ProgressLayout
-            android:id="@+id/progress_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            <!-- Compact utility bar (back / search / avatar) — hidden on the Home dashboard -->
+            <LinearLayout
+                android:id="@+id/aurora_top_bar"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
+                <LinearLayout
+                    android:id="@+id/aurora_back_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_aurora_more_pill"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_arrow_back_white" />
+
+                    <TextView
+                        android:id="@+id/aurora_back_chip_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="Back"
+                        android:textColor="@color/aurora_text_white"
+                        android:textSize="11.5sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/aurora_search_container"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_aurora_search_pill"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_aurora_search"
+                        android:tint="@color/aurora_mint_deep"
+                        tools:ignore="UseAppTint" />
+
+                    <EditText
+                        android:id="@+id/aurora_search_input"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="@string/aurora_search_worlds_hint"
+                        android:imeOptions="actionSearch|flagNoExtractUi"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="4dp"
+                        android:singleLine="true"
+                        android:textColor="@color/aurora_text_white"
+                        android:textColorHint="@color/aurora_text_muted"
+                        android:textSize="12sp"
+                        tools:ignore="Autofill" />
+
+                    <ImageButton
+                        android:id="@+id/aurora_search_clear"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@android:string/cancel"
+                        android:padding="2dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_aurora_close"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/aurora_avatar_container"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_aurora_avatar_ring" />
+
+                    <net.kdt.pojavlaunch.dashboard.RoundedImageView
+                        android:id="@+id/aurora_avatar_image"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_voxel_avatar_default"
+                        app:auroraCircle="true" />
+
+                    <View
+                        android:id="@+id/aurora_avatar_status_dot"
+                        android:layout_width="11dp"
+                        android:layout_height="11dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_aurora_status_dot" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- MAIN DYNAMIC DASHBOARD CONTENT CONTAINER -->
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/container_fragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/progress_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/aurora_top_bar" />
+
+            <!-- Global ProgressLayout (non-Home screens during background tasks) -->
+            <com.kdt.mcgui.ProgressLayout
+                android:id="@+id/progress_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

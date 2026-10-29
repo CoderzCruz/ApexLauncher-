@@ -47,6 +47,7 @@ import net.kdt.pojavlaunch.extra.ExtraListener;
 import net.kdt.pojavlaunch.fragments.MainMenuFragment;
 import net.kdt.pojavlaunch.fragments.MicrosoftLoginFragment;
 import net.kdt.pojavlaunch.fragments.ProfileDashboardFragment;
+import net.kdt.pojavlaunch.fragments.ProfileTypeSelectFragment;
 import net.kdt.pojavlaunch.fragments.SearchModFragment;
 import net.kdt.pojavlaunch.fragments.SelectAuthFragment;
 import net.kdt.pojavlaunch.fragments.WorldsFragment;
@@ -111,10 +112,11 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
     private RoundedImageView mAvatarImage;
     private View mAvatarStatusDot;
 
-    private View mNavHome, mNavWorlds, mNavMarketplace, mNavJava, mNavProfile;
-    private View mNavHomeOrb, mNavWorldsOrb, mNavMarketplaceOrb, mNavJavaOrb, mNavProfileOrb;
-    private ImageView mNavHomeIcon, mNavWorldsIcon, mNavMarketplaceIcon, mNavJavaIcon, mNavProfileIcon;
-    private TextView mNavHomeLabel, mNavWorldsLabel, mNavMarketplaceLabel, mNavJavaLabel, mNavProfileLabel;
+    private View mTopBar;
+    private View mSearchContainer;
+    private View mNavHome, mNavCreate, mNavLibrary, mNavExplore, mNavRuntime, mNavInstall, mNavSettings, mNavAccounts;
+    private ImageView mNavHomeIcon, mNavCreateIcon, mNavLibraryIcon, mNavExploreIcon;
+    private ImageView mNavRuntimeIcon, mNavInstallIcon, mNavSettingsIcon, mNavAccountsIcon;
 
     private String mCurrentSearchQuery = "";
     @Nullable private String mPendingQuickPlayWorld = null;
@@ -243,14 +245,16 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
 
     private void setupHeaderAndNavigation() {
         findViewById(R.id.aurora_brand_logo).setOnClickListener(v -> navigateToTab(TAB_HOME, null));
-        findViewById(R.id.aurora_brand_title).setOnClickListener(v -> navigateToTab(TAB_HOME, null));
         mBackChip.setOnClickListener(v -> onBackPressed());
 
         mNavHome.setOnClickListener(v -> navigateToTab(TAB_HOME, null));
-        mNavWorlds.setOnClickListener(v -> navigateToTab(TAB_WORLDS, null));
-        mNavMarketplace.setOnClickListener(v -> navigateToTab(TAB_MARKETPLACE, null));
-        mNavJava.setOnClickListener(v -> navigateToTab(TAB_JAVA, null));
-        mNavProfile.setOnClickListener(v -> navigateToTab(TAB_PROFILE, null));
+        mNavCreate.setOnClickListener(v -> openCreateInstance());
+        mNavLibrary.setOnClickListener(v -> navigateToTab(TAB_WORLDS, null));
+        mNavExplore.setOnClickListener(v -> navigateToTab(TAB_MARKETPLACE, null));
+        mNavRuntime.setOnClickListener(v -> navigateToTab(TAB_JAVA, null));
+        mNavInstall.setOnClickListener(v -> openModInstaller());
+        mNavSettings.setOnClickListener(v -> openLauncherSettings());
+        mNavAccounts.setOnClickListener(v -> navigateToTab(TAB_PROFILE, null));
 
         mAvatarContainer.setOnClickListener(v -> openQuickAccountSheet());
 
@@ -289,6 +293,23 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         });
 
         updateNavSelection(TAB_HOME);
+    }
+
+    private void openCreateInstance() {
+        Tools.backToMainMenu(this);
+        Tools.swapFragment(this, ProfileTypeSelectFragment.class, ProfileTypeSelectFragment.TAG, null);
+    }
+
+    private void openLauncherSettings() {
+        Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null);
+    }
+
+    private void openModInstaller() {
+        if (ProgressKeeper.getTaskCount() > 0) {
+            Toast.makeText(this, R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
+            return;
+        }
+        Tools.installMod(this, false);
     }
 
     public void navigateToTab(int tabIndex, @Nullable String optionalQuery) {
@@ -330,7 +351,11 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
     }
 
     private void syncShellForFragment(@NonNull Fragment f) {
-        if (f instanceof MainMenuFragment) {
+        boolean isHome = f instanceof MainMenuFragment;
+        boolean wantsSearch = f instanceof WorldsFragment || f instanceof SearchModFragment;
+        configureTopBar(!isHome, wantsSearch);
+
+        if (isHome) {
             updateNavSelection(TAB_HOME);
             mBackChip.setVisibility(View.GONE);
         } else if (f instanceof WorldsFragment) {
@@ -342,16 +367,30 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         } else if (f instanceof LauncherPreferenceJavaFragment) {
             updateNavSelection(TAB_JAVA);
             mBackChip.setVisibility(View.VISIBLE);
-        } else if (f instanceof ProfileDashboardFragment
-                || f instanceof SelectAuthFragment
-                || f instanceof MicrosoftLoginFragment
-                || f instanceof LauncherPreferenceFragment) {
+        } else if (f instanceof LauncherPreferenceFragment) {
+            updateNavSelection(-1);
+            highlightOnly(mNavSettings, mNavSettingsIcon);
+            mBackChip.setVisibility(View.VISIBLE);
+        } else if (f instanceof ProfileDashboardFragment) {
             updateNavSelection(TAB_PROFILE);
-            mBackChip.setVisibility(f instanceof ProfileDashboardFragment ? View.GONE : View.VISIBLE);
+            mBackChip.setVisibility(View.GONE);
+        } else if (f instanceof SelectAuthFragment || f instanceof MicrosoftLoginFragment) {
+            updateNavSelection(TAB_PROFILE);
+            mBackChip.setVisibility(View.VISIBLE);
         } else {
             mBackChip.setVisibility(View.VISIBLE);
         }
         syncGlobalProgressVisibility();
+    }
+
+    /** Shows / hides the utility bar, and toggles the search field inside it. */
+    private void configureTopBar(boolean visible, boolean showSearch) {
+        if (mTopBar != null) {
+            mTopBar.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+        if (mSearchContainer != null) {
+            mSearchContainer.setVisibility(showSearch ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void syncGlobalProgressVisibility() {
@@ -365,25 +404,35 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
     }
 
     private void updateNavSelection(int activeTab) {
-        applyNavItemState(mNavHomeOrb, mNavHomeIcon, mNavHomeLabel, activeTab == TAB_HOME);
-        applyNavItemState(mNavWorldsOrb, mNavWorldsIcon, mNavWorldsLabel, activeTab == TAB_WORLDS);
-        applyNavItemState(mNavMarketplaceOrb, mNavMarketplaceIcon, mNavMarketplaceLabel, activeTab == TAB_MARKETPLACE);
-        applyNavItemState(mNavJavaOrb, mNavJavaIcon, mNavJavaLabel, activeTab == TAB_JAVA);
-        applyNavItemState(mNavProfileOrb, mNavProfileIcon, mNavProfileLabel, activeTab == TAB_PROFILE);
+        applyNavItemState(mNavHome, mNavHomeIcon, activeTab == TAB_HOME);
+        applyNavItemState(mNavLibrary, mNavLibraryIcon, activeTab == TAB_WORLDS);
+        applyNavItemState(mNavExplore, mNavExploreIcon, activeTab == TAB_MARKETPLACE);
+        applyNavItemState(mNavRuntime, mNavRuntimeIcon, activeTab == TAB_JAVA);
+        applyNavItemState(mNavAccounts, mNavAccountsIcon, activeTab == TAB_PROFILE);
+        applyNavItemState(mNavCreate, mNavCreateIcon, false);
+        applyNavItemState(mNavInstall, mNavInstallIcon, false);
+        if (activeTab != -1) {
+            applyNavItemState(mNavSettings, mNavSettingsIcon, false);
+        }
     }
 
-    private void applyNavItemState(View orb, ImageView icon, TextView label, boolean active) {
-        if (orb != null) {
-            orb.setSelected(active);
+    private void highlightOnly(View container, ImageView icon) {
+        applyNavItemState(mNavHome, mNavHomeIcon, false);
+        applyNavItemState(mNavLibrary, mNavLibraryIcon, false);
+        applyNavItemState(mNavExplore, mNavExploreIcon, false);
+        applyNavItemState(mNavRuntime, mNavRuntimeIcon, false);
+        applyNavItemState(mNavAccounts, mNavAccountsIcon, false);
+        applyNavItemState(container, icon, true);
+    }
+
+    private void applyNavItemState(View container, ImageView icon, boolean active) {
+        if (container != null) {
+            container.setSelected(active);
         }
-        int iconTint = ContextCompat.getColor(this,
-                active ? R.color.aurora_dark_ink : R.color.aurora_text_white);
-        icon.setColorFilter(iconTint);
-        label.setTextColor(ContextCompat.getColor(this,
-                active ? R.color.aurora_teal_bright : R.color.aurora_text_sub));
-        Typeface bold = ResourcesCompat.getFont(this, R.font.noto_sans_bold);
-        label.setTypeface(active && bold != null ? bold : Typeface.DEFAULT,
-                active ? Typeface.BOLD : Typeface.NORMAL);
+        if (icon != null) {
+            icon.setColorFilter(ContextCompat.getColor(this,
+                    active ? R.color.aurora_mint_ink : R.color.aurora_text_white));
+        }
     }
 
     public void openQuickAccountSheet() {
@@ -611,7 +660,7 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         }
         Fragment active = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
         if (active instanceof MainMenuFragment) {
-            ((MainMenuFragment) active).refreshHardwareTelemetry();
+            ((MainMenuFragment) active).refreshAccountArtwork();
         }
     }
 
@@ -749,6 +798,8 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         mFragmentView = findViewById(R.id.container_fragment);
         mProgressLayout = findViewById(R.id.progress_layout);
         mBackChip = findViewById(R.id.aurora_back_chip);
+        mTopBar = findViewById(R.id.aurora_top_bar);
+        mSearchContainer = findViewById(R.id.aurora_search_container);
         mSearchInput = findViewById(R.id.aurora_search_input);
         mSearchClear = findViewById(R.id.aurora_search_clear);
         mAvatarContainer = findViewById(R.id.aurora_avatar_container);
@@ -756,27 +807,21 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         mAvatarStatusDot = findViewById(R.id.aurora_avatar_status_dot);
 
         mNavHome = findViewById(R.id.aurora_nav_home);
-        mNavWorlds = findViewById(R.id.aurora_nav_worlds);
-        mNavMarketplace = findViewById(R.id.aurora_nav_marketplace);
-        mNavJava = findViewById(R.id.aurora_nav_java);
-        mNavProfile = findViewById(R.id.aurora_nav_profile);
-
-        mNavHomeOrb = findViewById(R.id.aurora_nav_home_orb);
-        mNavWorldsOrb = findViewById(R.id.aurora_nav_worlds_orb);
-        mNavMarketplaceOrb = findViewById(R.id.aurora_nav_marketplace_orb);
-        mNavJavaOrb = findViewById(R.id.aurora_nav_java_orb);
-        mNavProfileOrb = findViewById(R.id.aurora_nav_profile_orb);
+        mNavCreate = findViewById(R.id.aurora_nav_create);
+        mNavLibrary = findViewById(R.id.aurora_nav_library);
+        mNavExplore = findViewById(R.id.aurora_nav_explore);
+        mNavRuntime = findViewById(R.id.aurora_nav_runtime);
+        mNavInstall = findViewById(R.id.aurora_nav_install);
+        mNavSettings = findViewById(R.id.aurora_nav_settings);
+        mNavAccounts = findViewById(R.id.aurora_nav_accounts);
 
         mNavHomeIcon = findViewById(R.id.aurora_nav_home_icon);
-        mNavWorldsIcon = findViewById(R.id.aurora_nav_worlds_icon);
-        mNavMarketplaceIcon = findViewById(R.id.aurora_nav_marketplace_icon);
-        mNavJavaIcon = findViewById(R.id.aurora_nav_java_icon);
-        mNavProfileIcon = findViewById(R.id.aurora_nav_profile_icon);
-
-        mNavHomeLabel = findViewById(R.id.aurora_nav_home_label);
-        mNavWorldsLabel = findViewById(R.id.aurora_nav_worlds_label);
-        mNavMarketplaceLabel = findViewById(R.id.aurora_nav_marketplace_label);
-        mNavJavaLabel = findViewById(R.id.aurora_nav_java_label);
-        mNavProfileLabel = findViewById(R.id.aurora_nav_profile_label);
+        mNavCreateIcon = findViewById(R.id.aurora_nav_create_icon);
+        mNavLibraryIcon = findViewById(R.id.aurora_nav_library_icon);
+        mNavExploreIcon = findViewById(R.id.aurora_nav_explore_icon);
+        mNavRuntimeIcon = findViewById(R.id.aurora_nav_runtime_icon);
+        mNavInstallIcon = findViewById(R.id.aurora_nav_install_icon);
+        mNavSettingsIcon = findViewById(R.id.aurora_nav_settings_icon);
+        mNavAccountsIcon = findViewById(R.id.aurora_nav_accounts_icon);
     }
 }

@@ -18,25 +18,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import net.kdt.pojavlaunch.CustomControlsActivity;
-import net.kdt.pojavlaunch.JMinecraftVersionList;
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.dashboard.AuroraAccountController;
+import net.kdt.pojavlaunch.dashboard.AuroraPlayerSkinView;
 import net.kdt.pojavlaunch.dashboard.AuroraSegmentedHubDialog;
 import net.kdt.pojavlaunch.dashboard.DashboardProgressController;
-import net.kdt.pojavlaunch.dashboard.RoundedImageView;
 import net.kdt.pojavlaunch.dashboard.WorldSaveScanner;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
-import net.kdt.pojavlaunch.multirt.MultiRTUtils;
-import net.kdt.pojavlaunch.multirt.Runtime;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceJavaFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
-import net.kdt.pojavlaunch.tasks.AsyncMinecraftDownloader;
-import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
 import net.kdt.pojavlaunch.value.MinecraftAccount;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
@@ -47,36 +42,29 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Abyssal Bioluminescent Ocean Glass (#02) Home Dashboard Fragment.
+ * "Your Space" home dashboard — quick actions, the active world card with a mint
+ * Play bar, live background-task status and the player column on the right.
  */
 public class MainMenuFragment extends Fragment {
     public static final String TAG = "MainMenuFragment";
 
-    private RoundedImageView mHeroImage;
-    private TextView mHeroBadge;
-    private TextView mHeroTitle;
-    private TextView mHeroSubtitle;
-    private TextView mHeroVersionChip;
+    private TextView mQuickLibrarySub;
 
-    private TextView mHardwareSummary;
+    private TextView mActiveWorldSub;
+    private ImageView mActiveWorldIcon;
+    private TextView mActiveWorldTitle;
+    private TextView mActiveWorldMeta;
 
-    private View mRecentRow1;
-    private RoundedImageView mRecentThumb1;
-    private TextView mRecentTitle1;
-    private TextView mRecentSub1;
-    private ImageButton mRecentPlay1;
+    private TextView mTasksStatus;
+    private View mTasksCard;
 
-    private View mRecentRow2;
-    private RoundedImageView mRecentThumb2;
-    private TextView mRecentTitle2;
-    private TextView mRecentSub2;
-    private ImageButton mRecentPlay2;
+    private AuroraPlayerSkinView mPlayerSkinView;
+    private TextView mPlayerInstanceTitle;
+    private TextView mPlayerInstanceMeta;
 
-    private DashboardProgressController mProgressController;
+    private DashboardProgressController mTaskController;
 
-    private WorldSaveScanner.DashboardWorldItem mFeaturedItem;
-    private WorldSaveScanner.DashboardWorldItem mRecentItem1;
-    private WorldSaveScanner.DashboardWorldItem mRecentItem2;
+    private WorldSaveScanner.DashboardWorldItem mActiveItem;
     private String mSearchFilter = "";
 
     public MainMenuFragment() {
@@ -93,76 +81,63 @@ public class MainMenuFragment extends Fragment {
                     .apply();
         }
 
-        mHeroImage = view.findViewById(R.id.aurora_hero_image);
-        mHeroBadge = view.findViewById(R.id.aurora_hero_badge);
-        mHeroTitle = view.findViewById(R.id.aurora_hero_title);
-        mHeroSubtitle = view.findViewById(R.id.aurora_hero_subtitle);
-        mHeroVersionChip = view.findViewById(R.id.aurora_hero_version_chip);
+        mQuickLibrarySub = view.findViewById(R.id.quick_library_sub);
 
-        mHardwareSummary = view.findViewById(R.id.abyssal_hardware_summary);
-        View statAccount = view.findViewById(R.id.abyssal_stat_account);
-        View statJava = view.findViewById(R.id.abyssal_stat_java);
-        View statRam = view.findViewById(R.id.abyssal_stat_ram);
+        mActiveWorldSub = view.findViewById(R.id.active_world_sub);
+        mActiveWorldIcon = view.findViewById(R.id.active_world_icon);
+        mActiveWorldTitle = view.findViewById(R.id.active_world_title);
+        mActiveWorldMeta = view.findViewById(R.id.active_world_meta);
 
-        mRecentRow1 = view.findViewById(R.id.aurora_recent_row_1);
-        mRecentThumb1 = view.findViewById(R.id.aurora_recent_thumb_1);
-        mRecentTitle1 = view.findViewById(R.id.aurora_recent_title_1);
-        mRecentSub1 = view.findViewById(R.id.aurora_recent_sub_1);
-        mRecentPlay1 = view.findViewById(R.id.aurora_recent_play_1);
+        mTasksCard = view.findViewById(R.id.tasks_card);
+        mTasksStatus = view.findViewById(R.id.tasks_status);
 
-        mRecentRow2 = view.findViewById(R.id.aurora_recent_row_2);
-        mRecentThumb2 = view.findViewById(R.id.aurora_recent_thumb_2);
-        mRecentTitle2 = view.findViewById(R.id.aurora_recent_title_2);
-        mRecentSub2 = view.findViewById(R.id.aurora_recent_sub_2);
-        mRecentPlay2 = view.findViewById(R.id.aurora_recent_play_2);
+        mPlayerSkinView = view.findViewById(R.id.player_skin_view);
+        mPlayerInstanceTitle = view.findViewById(R.id.player_instance_title);
+        mPlayerInstanceMeta = view.findViewById(R.id.player_instance_meta);
 
         View playButton = view.findViewById(R.id.play_button);
-        ImageButton moreBtn = view.findViewById(R.id.aurora_hero_more_btn);
-        View viewAllBtn = view.findViewById(R.id.aurora_view_all_btn);
-        View progressCard = view.findViewById(R.id.aurora_progress_card);
+        View playerPlayButton = view.findViewById(R.id.player_play_button);
+        View playerInstancePill = view.findViewById(R.id.player_instance_pill);
+        View activeWorldCard = view.findViewById(R.id.aurora_active_world_card);
+        ImageButton hubBtn = view.findViewById(R.id.aurora_hero_more_btn);
 
-        playButton.setOnClickListener(v -> launchDashboardItem(mFeaturedItem));
-        moreBtn.setOnClickListener(v -> showHeroQuickActionsDialog());
-        mHeroVersionChip.setOnClickListener(v -> showProfileSelectorDialog());
+        // ---- Quick actions ----
+        view.findViewById(R.id.quick_create_card).setOnClickListener(v -> openCreateInstance());
+        view.findViewById(R.id.quick_explore_card).setOnClickListener(v ->
+                navigateToTab(LauncherActivity.TAB_MARKETPLACE));
+        view.findViewById(R.id.quick_library_card).setOnClickListener(v ->
+                navigateToTab(LauncherActivity.TAB_WORLDS));
 
-        statAccount.setOnClickListener(v -> {
-            if (getActivity() instanceof LauncherActivity) {
-                ((LauncherActivity) getActivity()).openQuickAccountSheet();
+        // ---- Active world card ----
+        playButton.setOnClickListener(v -> launchActiveWorld());
+        playerPlayButton.setOnClickListener(v -> launchActiveWorld());
+        hubBtn.setOnClickListener(v -> showHeroQuickActionsDialog());
+        activeWorldCard.setOnClickListener(v -> showProfileSelectorDialog());
+        playerInstancePill.setOnClickListener(v -> showProfileSelectorDialog());
+
+        // ---- Player column ----
+        view.findViewById(R.id.btn_add_account).setOnClickListener(v -> openAccountChooser());
+        if (mPlayerSkinView != null) {
+            mPlayerSkinView.setOnClickListener(v -> openAccountChooser());
+        }
+
+        // ---- Tasks card ----
+        mTasksCard.setOnClickListener(v -> {
+            if (ProgressKeeper.hasOngoingTasks()) {
+                Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), R.string.aurora_tasks_idle, Toast.LENGTH_SHORT).show();
             }
         });
-        statJava.setOnClickListener(v -> {
-            if (getActivity() instanceof LauncherActivity) {
-                ((LauncherActivity) getActivity()).navigateToTab(LauncherActivity.TAB_JAVA, null);
-            }
-        });
-        statRam.setOnClickListener(v -> {
-            if (getActivity() instanceof LauncherActivity) {
-                ((LauncherActivity) getActivity()).navigateToTab(LauncherActivity.TAB_JAVA, null);
-            }
-        });
 
-        viewAllBtn.setOnClickListener(v -> {
-            if (getActivity() instanceof LauncherActivity) {
-                ((LauncherActivity) getActivity()).navigateToTab(LauncherActivity.TAB_WORLDS, null);
-            }
-        });
-
-        mRecentRow1.setOnClickListener(v -> selectIntoHero(mRecentItem1));
-        mRecentPlay1.setOnClickListener(v -> launchDashboardItem(mRecentItem1));
-
-        mRecentRow2.setOnClickListener(v -> selectIntoHero(mRecentItem2));
-        mRecentPlay2.setOnClickListener(v -> launchDashboardItem(mRecentItem2));
-
-        progressCard.setOnClickListener(v -> triggerFileSyncOrStatus());
-
-        mProgressController = new DashboardProgressController(progressCard);
-        mProgressController.attach();
+        mTaskController = new DashboardProgressController(mTasksCard);
+        mTaskController.attach();
 
         if (getActivity() instanceof LauncherActivity) {
             mSearchFilter = ((LauncherActivity) getActivity()).getCurrentSearchQuery();
         }
         refreshDashboardData();
-        refreshHardwareTelemetry();
+        refreshAccountArtwork();
     }
 
     @Override
@@ -176,16 +151,16 @@ public class MainMenuFragment extends Fragment {
                     .apply();
         }
         refreshDashboardData();
-        refreshHardwareTelemetry();
-        if (mProgressController != null) {
-            mProgressController.refreshIdleState();
+        refreshAccountArtwork();
+        if (mTaskController != null) {
+            mTaskController.refreshIdleState();
         }
     }
 
     @Override
     public void onDestroyView() {
-        if (mProgressController != null) {
-            mProgressController.detach();
+        if (mTaskController != null) {
+            mTaskController.detach();
         }
         super.onDestroyView();
     }
@@ -197,82 +172,58 @@ public class MainMenuFragment extends Fragment {
         }
     }
 
-    public void refreshHardwareTelemetry() {
-        if (!isAdded() || mHardwareSummary == null) return;
+    private void navigateToTab(int tab) {
+        if (getActivity() instanceof LauncherActivity) {
+            ((LauncherActivity) getActivity()).navigateToTab(tab, null);
+        }
+    }
 
-        // 1. Player Status
-        String playerStatus = "Sign In";
+    private void openCreateInstance() {
+        if (!isAdded()) return;
+        Tools.swapFragment(requireActivity(), ProfileTypeSelectFragment.class,
+                ProfileTypeSelectFragment.TAG, null);
+    }
+
+    public void refreshAccountArtwork() {
+        if (!isAdded()) return;
+        Bitmap face = null;
+        boolean online = false;
         if (getActivity() instanceof LauncherActivity) {
             AuroraAccountController ctrl = ((LauncherActivity) getActivity()).getAccountController();
             if (ctrl != null) {
                 MinecraftAccount acc = ctrl.getSelectedAccount();
-                if (acc != null && Tools.isValidString(acc.username)) {
-                    playerStatus = acc.username + " Online";
+                if (acc != null) {
+                    online = true;
+                    face = acc.getSkinFace();
                 }
             }
         }
-
-        // 2. Active OpenJDK Runtime
-        String jdkLabel = resolveOpenJdkLabel();
-
-        // 3. Allocated RAM
-        int ramMb = LauncherPreferences.PREF_RAM_ALLOCATION;
-        String ramLabel;
-        if (ramMb >= 1024) {
-            if (ramMb % 1024 == 0) {
-                ramLabel = (ramMb / 1024) + " GB RAM";
-            } else {
-                ramLabel = String.format(Locale.US, "%.1f GB RAM", ramMb / 1024f);
-            }
-        } else {
-            ramLabel = ramMb + " MB RAM";
+        if (mPlayerSkinView != null) {
+            mPlayerSkinView.setFaceBitmap(face);
+            mPlayerSkinView.setOnline(online);
         }
-
-        mHardwareSummary.setText(playerStatus + " • " + jdkLabel + " • " + ramLabel);
-    }
-
-    @NonNull
-    private String resolveOpenJdkLabel() {
-        try {
-            List<Runtime> runtimes = MultiRTUtils.getRuntimes();
-            if (runtimes != null && !runtimes.isEmpty()) {
-                String preferred = LauncherPreferences.PREF_DEFAULT_RUNTIME;
-                WorldSaveScanner.ensureProfilesInitialized(requireContext());
-                String key = LauncherPreferences.DEFAULT_PREF.getString(
-                        LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
-                MinecraftProfile prof = LauncherProfiles.mainProfileJson != null
-                        ? LauncherProfiles.mainProfileJson.profiles.get(key) : null;
-                if (prof != null && Tools.isValidString(prof.javaDir)
-                        && prof.javaDir.startsWith(Tools.LAUNCHERPROFILES_RTPREFIX)) {
-                    preferred = prof.javaDir.substring(Tools.LAUNCHERPROFILES_RTPREFIX.length());
-                }
-
-                Runtime matched = null;
-                int highestVer = 0;
-                for (Runtime rt : runtimes) {
-                    if (rt.javaVersion > highestVer) {
-                        highestVer = rt.javaVersion;
-                    }
-                    if (Tools.isValidString(preferred) && preferred.equals(rt.name)) {
-                        matched = rt;
-                    }
-                }
-                if (matched != null && matched.javaVersion > 0) {
-                    return "OpenJDK " + matched.javaVersion;
-                }
-                if (highestVer > 0) {
-                    return "OpenJDK " + highestVer;
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        return "OpenJDK 21";
     }
 
     public void refreshDashboardData() {
         if (!isAdded()) return;
+
+        // ---- Library / instance counter ----
+        int instanceCount = 0;
+        if (LauncherProfiles.mainProfileJson != null
+                && LauncherProfiles.mainProfileJson.profiles != null) {
+            instanceCount = LauncherProfiles.mainProfileJson.profiles.size();
+        }
+        if (mQuickLibrarySub != null) {
+            mQuickLibrarySub.setText(getString(R.string.aurora_quick_library_sub, instanceCount));
+        }
+
         List<WorldSaveScanner.DashboardWorldItem> all = WorldSaveScanner.scanAllItems(requireContext());
-        if (all.isEmpty()) return;
+        if (all.isEmpty()) {
+            if (mActiveWorldTitle != null) {
+                mActiveWorldTitle.setText(getString(R.string.aurora_default_world_title));
+            }
+            return;
+        }
 
         List<WorldSaveScanner.DashboardWorldItem> pool = new ArrayList<>();
         String q = mSearchFilter.toLowerCase(Locale.ROOT);
@@ -287,145 +238,80 @@ public class MainMenuFragment extends Fragment {
             pool.addAll(all);
         }
 
-        mFeaturedItem = q.isEmpty()
+        mActiveItem = q.isEmpty()
                 ? WorldSaveScanner.resolveFeaturedItem(requireContext(), pool)
                 : pool.get(0);
-        if (mFeaturedItem == null) mFeaturedItem = pool.get(0);
+        if (mActiveItem == null) mActiveItem = pool.get(0);
 
-        bindHero(mFeaturedItem);
-
-        List<WorldSaveScanner.DashboardWorldItem> recents = new ArrayList<>();
-        for (WorldSaveScanner.DashboardWorldItem candidate : pool) {
-            if (!candidate.id.equals(mFeaturedItem.id)) {
-                recents.add(candidate);
-            }
-        }
-        if (recents.isEmpty()) {
-            recents.add(mFeaturedItem);
-        }
-
-        mRecentItem1 = recents.get(0);
-        mRecentItem2 = recents.size() > 1 ? recents.get(1) : null;
-
-        bindRecentRow(mRecentRow1, mRecentThumb1, mRecentTitle1, mRecentSub1, mRecentItem1);
-        bindRecentRow(mRecentRow2, mRecentThumb2, mRecentTitle2, mRecentSub2, mRecentItem2);
+        bindActiveWorld(mActiveItem);
     }
 
-    private void bindHero(@NonNull WorldSaveScanner.DashboardWorldItem item) {
-        String verLower = item.versionId.toLowerCase(Locale.ROOT);
-        String loaderPrefix = "IRIS SHADERS";
-        if (verLower.contains("fabric")) loaderPrefix = "FABRIC";
-        else if (verLower.contains("quilt")) loaderPrefix = "QUILT";
-        else if (verLower.contains("neoforge")) loaderPrefix = "NEOFORGE";
-        else if (verLower.contains("forge")) loaderPrefix = "FORGE";
-        else if (verLower.contains("optifine")) loaderPrefix = "OPTIFINE";
+    private void bindActiveWorld(@NonNull WorldSaveScanner.DashboardWorldItem item) {
+        String versionLabel = Tools.isValidString(item.versionId)
+                ? item.versionId : getString(R.string.aurora_default_world_title);
+        String loader = resolveLoaderName(item.versionId);
+        String meta = loader + " · Minecraft " + versionLabel;
 
-        String shortVer = item.versionId;
-        if (shortVer.length() > 18) {
-            shortVer = shortVer.substring(0, 18);
+        if (mActiveWorldTitle != null) {
+            mActiveWorldTitle.setText(versionLabel);
         }
-        mHeroBadge.setText((loaderPrefix + " • " + shortVer).toUpperCase(Locale.ROOT));
-        mHeroTitle.setText(item.title);
-        mHeroSubtitle.setText(item.description);
-        mHeroVersionChip.setText(item.versionId + " ▾");
-        loadArtworkInto(mHeroImage, item);
+        if (mActiveWorldMeta != null) {
+            mActiveWorldMeta.setText(meta);
+        }
+        if (mActiveWorldSub != null) {
+            mActiveWorldSub.setText(getString(R.string.aurora_active_world_sub) + " · " + item.title);
+        }
+        if (mPlayerInstanceTitle != null) {
+            mPlayerInstanceTitle.setText(versionLabel);
+        }
+        if (mPlayerInstanceMeta != null) {
+            mPlayerInstanceMeta.setText("Minecraft " + versionLabel);
+        }
+        loadActiveWorldIcon(item);
     }
 
-    private void bindRecentRow(@NonNull View row, @NonNull RoundedImageView thumb,
-                               @NonNull TextView title, @NonNull TextView sub,
-                               @Nullable WorldSaveScanner.DashboardWorldItem item) {
-        if (item == null) {
-            row.setVisibility(View.INVISIBLE);
-            return;
-        }
-        row.setVisibility(View.VISIBLE);
-        title.setText(item.title);
-        sub.setText(item.subtitle);
-        loadArtworkInto(thumb, item);
-    }
-
-    private void loadArtworkInto(@NonNull ImageView target, @NonNull WorldSaveScanner.DashboardWorldItem item) {
+    private void loadActiveWorldIcon(@NonNull WorldSaveScanner.DashboardWorldItem item) {
+        if (mActiveWorldIcon == null) return;
         if (item.iconFile != null && item.iconFile.exists()) {
             Bitmap bmp = BitmapFactory.decodeFile(item.iconFile.getAbsolutePath());
             if (bmp != null) {
-                target.setImageBitmap(bmp);
+                mActiveWorldIcon.setImageBitmap(bmp);
                 return;
             }
         }
-        target.setImageResource(item.fallbackArtRes);
+        mActiveWorldIcon.setImageResource(R.drawable.ic_grass_block);
     }
 
-    private void selectIntoHero(@Nullable WorldSaveScanner.DashboardWorldItem item) {
-        if (item == null || !isAdded()) return;
-        WorldSaveScanner.setFeaturedAndSelectProfile(requireContext(), item);
-        refreshDashboardData();
-        refreshHardwareTelemetry();
-        if (mProgressController != null) {
-            mProgressController.refreshIdleState();
+    @NonNull
+    private String resolveLoaderName(@Nullable String versionId) {
+        if (versionId == null) return "Vanilla";
+        String lower = versionId.toLowerCase(Locale.ROOT);
+        if (lower.contains("neoforge")) return "NeoForge";
+        if (lower.contains("fabric")) return "Fabric";
+        if (lower.contains("quilt")) return "Quilt";
+        if (lower.contains("forge")) return "Forge";
+        if (lower.contains("optifine")) return "OptiFine";
+        return "Vanilla";
+    }
+
+    private void launchActiveWorld() {
+        if (!isAdded() || mActiveItem == null) {
+            ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
+            return;
         }
-    }
-
-    private void launchDashboardItem(@Nullable WorldSaveScanner.DashboardWorldItem item) {
-        if (!isAdded()) return;
-        if (item != null) {
-            WorldSaveScanner.setFeaturedAndSelectProfile(requireContext(), item);
-            WorldSaveScanner.recordPlayed(requireContext(), item.id);
-            if (getActivity() instanceof LauncherActivity) {
-                ((LauncherActivity) getActivity()).setPendingQuickPlayWorld(item.worldFolderName);
-            }
+        WorldSaveScanner.setFeaturedAndSelectProfile(requireContext(), mActiveItem);
+        WorldSaveScanner.recordPlayed(requireContext(), mActiveItem.id);
+        if (getActivity() instanceof LauncherActivity) {
+            ((LauncherActivity) getActivity()).setPendingQuickPlayWorld(mActiveItem.worldFolderName);
         }
         ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
     }
 
-    private void triggerFileSyncOrStatus() {
-        if (ProgressKeeper.hasOngoingTasks()) {
-            Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_SHORT).show();
-            return;
+    private void openAccountChooser() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof LauncherActivity) {
+            ((LauncherActivity) getActivity()).openQuickAccountSheet();
         }
-        if (Tools.isLocalProfile(requireContext())) {
-            Toast.makeText(requireContext(),
-                    "Sign in with a Microsoft account to download official game files, or tap PLAY for installed versions.",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-        WorldSaveScanner.ensureProfilesInitialized(requireContext());
-        String key = LauncherPreferences.DEFAULT_PREF.getString(
-                LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
-        MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(key);
-        if (prof == null || !Tools.isValidString(prof.lastVersionId)) return;
-
-        final String normVer = AsyncMinecraftDownloader.normalizeVersionId(prof.lastVersionId);
-        if (MinecraftProfile.LATEST_RELEASE.equals(normVer) || MinecraftProfile.LATEST_SNAPSHOT.equals(normVer)) {
-            Toast.makeText(requireContext(), "Fetching version manifest, try again in a moment...", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        JMinecraftVersionList.Version mcVer = AsyncMinecraftDownloader.getListedVersion(normVer);
-        Toast.makeText(requireContext(), "Syncing files for Minecraft " + normVer + "...", Toast.LENGTH_SHORT).show();
-        new MinecraftDownloader().start(
-                requireActivity(),
-                mcVer,
-                normVer,
-                new AsyncMinecraftDownloader.DoneListener() {
-                    @Override
-                    public void onDownloadDone() {
-                        Tools.runOnUiThread(() -> {
-                            if (isAdded()) {
-                                Toast.makeText(requireContext(),
-                                        "Minecraft " + normVer + " files verified & ready!",
-                                        Toast.LENGTH_SHORT).show();
-                                if (mProgressController != null) {
-                                    mProgressController.refreshIdleState();
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onDownloadFailed(Throwable throwable) {
-                        Tools.showErrorRemote(getString(R.string.mc_download_failed), throwable);
-                    }
-                }
-        );
     }
 
     @Nullable
@@ -447,8 +333,8 @@ public class MainMenuFragment extends Fragment {
         final List<WorldSaveScanner.DashboardWorldItem> items = WorldSaveScanner.scanAllItems(requireContext());
         final String activeProfileKey = LauncherPreferences.DEFAULT_PREF.getString(
                 LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
-        final String activeFeaturedId = mFeaturedItem != null
-                ? mFeaturedItem.id : WorldSaveScanner.getFeaturedId(requireContext());
+        final String activeFeaturedId = mActiveItem != null
+                ? mActiveItem.id : WorldSaveScanner.getFeaturedId(requireContext());
 
         List<AuroraSegmentedHubDialog.HubCardItem> cards = new ArrayList<>();
         for (final WorldSaveScanner.DashboardWorldItem it : items) {
@@ -469,7 +355,7 @@ public class MainMenuFragment extends Fragment {
                     isCurrent ? "Active" : "Select",
                     isCurrent,
                     true,
-                    () -> selectIntoHero(it)
+                    () -> selectActiveWorld(it)
             ));
         }
 
@@ -484,8 +370,19 @@ public class MainMenuFragment extends Fragment {
         return cards;
     }
 
+    private void selectActiveWorld(@Nullable WorldSaveScanner.DashboardWorldItem item) {
+        if (item == null || !isAdded()) return;
+        WorldSaveScanner.setFeaturedAndSelectProfile(requireContext(), item);
+        refreshDashboardData();
+        if (mTaskController != null) {
+            mTaskController.refreshIdleState();
+        }
+    }
+
     private void showProfileSelectorDialog() {
-        String activeTitle = mFeaturedItem != null ? mFeaturedItem.title : getString(R.string.app_short_name);
+        if (!isAdded()) return;
+        String activeTitle = mActiveItem != null
+                ? mActiveItem.title : getString(R.string.aurora_default_world_title);
         AuroraSegmentedHubDialog.showActionSheet(
                 requireActivity(),
                 activeTitle,
@@ -496,7 +393,9 @@ public class MainMenuFragment extends Fragment {
     }
 
     private void showHeroQuickActionsDialog() {
-        String activeTitle = mFeaturedItem != null ? mFeaturedItem.title : getString(R.string.app_short_name);
+        if (!isAdded()) return;
+        String activeTitle = mActiveItem != null
+                ? mActiveItem.title : getString(R.string.aurora_default_world_title);
         AuroraSegmentedHubDialog.showControlHub(
                 requireActivity(),
                 activeTitle,

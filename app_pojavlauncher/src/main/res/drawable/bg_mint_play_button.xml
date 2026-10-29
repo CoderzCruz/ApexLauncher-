@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="999dp" />
+                    <solid android:color="#C95FDCC2" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <!-- Soft mint bloom -->
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="999dp" />
+                    <solid android:color="#1F7DE8D0" />
+                </shape>
+            </item>
+            <item
+                android:left="1dp"
+                android:top="1dp"
+                android:right="1dp"
+                android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="999dp" />
+                    <gradient
+                        android:angle="270"
+                        android:startColor="#86EFD9"
+                        android:endColor="#6FE3CB"
+                        android:type="linear" />
+                    <stroke
+                        android:width="1dp"
+                        android:color="#66FFFFFF" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>
