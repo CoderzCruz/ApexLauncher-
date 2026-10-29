@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/inst_row_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="7dp"
+    android:background="@drawable/bg_inst_row"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="7dp">
+
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_inst_tile">
+
+        <ImageView
+            android:id="@+id/inst_row_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_grass_block" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/inst_row_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/noto_sans_bold"
+            android:maxLines="1"
+            android:text="1.12.2"
+            android:textColor="@color/aurora_text_white"
+            android:textSize="14.5sp" />
+
+        <TextView
+            android:id="@+id/inst_row_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Vanilla · 1.12.2"
+            android:textColor="@color/aurora_text_muted"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/inst_row_dot"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_inst_live_dot" />
+
+</LinearLayout>

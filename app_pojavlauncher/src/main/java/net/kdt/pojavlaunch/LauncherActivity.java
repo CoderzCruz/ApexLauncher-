@@ -50,6 +50,7 @@ import net.kdt.pojavlaunch.fragments.ProfileDashboardFragment;
 import net.kdt.pojavlaunch.fragments.ProfileTypeSelectFragment;
 import net.kdt.pojavlaunch.fragments.SearchModFragment;
 import net.kdt.pojavlaunch.fragments.SelectAuthFragment;
+import net.kdt.pojavlaunch.fragments.InstanceManagerFragment;
 import net.kdt.pojavlaunch.fragments.WorldsFragment;
 import net.kdt.pojavlaunch.lifecycle.ContextAwareDoneListener;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
@@ -270,6 +271,8 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
             Fragment active = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
             if (active instanceof MainMenuFragment) {
                 ((MainMenuFragment) active).applySearchFilter(mCurrentSearchQuery);
+            } else if (active instanceof InstanceManagerFragment) {
+                ((InstanceManagerFragment) active).applySearchQuery(mCurrentSearchQuery);
             } else if (active instanceof WorldsFragment) {
                 ((WorldsFragment) active).applySearchQuery(mCurrentSearchQuery);
             }
@@ -333,7 +336,7 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
             }
             case TAB_WORLDS:
                 updateNavSelection(TAB_WORLDS);
-                Tools.swapFragment(this, WorldsFragment.class, WorldsFragment.TAG, null);
+                Tools.swapFragment(this, InstanceManagerFragment.class, InstanceManagerFragment.TAG, null);
                 break;
             case TAB_MARKETPLACE:
                 updateNavSelection(TAB_MARKETPLACE);
@@ -352,13 +355,14 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
 
     private void syncShellForFragment(@NonNull Fragment f) {
         boolean isHome = f instanceof MainMenuFragment;
-        boolean wantsSearch = f instanceof WorldsFragment || f instanceof SearchModFragment;
-        configureTopBar(!isHome, wantsSearch);
+        boolean ownsOwnHeader = f instanceof InstanceManagerFragment;
+        boolean wantsSearch = f instanceof WorldsFragment;
+        configureTopBar(!isHome && !ownsOwnHeader, wantsSearch);
 
         if (isHome) {
             updateNavSelection(TAB_HOME);
             mBackChip.setVisibility(View.GONE);
-        } else if (f instanceof WorldsFragment) {
+        } else if (f instanceof InstanceManagerFragment || f instanceof WorldsFragment) {
             updateNavSelection(TAB_WORLDS);
             mBackChip.setVisibility(View.GONE);
         } else if (f instanceof SearchModFragment) {
@@ -616,7 +620,9 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
                 Tools.runOnUiThread(() -> {
                     Toast.makeText(this, "Imported world: " + imported.getName(), Toast.LENGTH_LONG).show();
                     Fragment active = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
-                    if (active instanceof WorldsFragment) {
+                    if (active instanceof InstanceManagerFragment) {
+                        ((InstanceManagerFragment) active).reload();
+                    } else if (active instanceof WorldsFragment) {
                         ((WorldsFragment) active).reloadWorlds();
                     } else if (active instanceof MainMenuFragment) {
                         ((MainMenuFragment) active).refreshDashboardData();
