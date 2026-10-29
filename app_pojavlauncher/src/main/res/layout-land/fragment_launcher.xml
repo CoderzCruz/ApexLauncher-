@@ -8,15 +8,15 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <!-- CENTER HERO FEATURED WORLD GLASS CARD -->
+    <!-- CENTER HERO FEATURED WORLD GLASS CARD ('Atlantis Depths') -->
     <FrameLayout
         android:id="@+id/aurora_hero_card"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="12dp"
         android:background="@drawable/bg_aurora_glass_card"
-        android:padding="4dp"
-        app:layout_constraintHorizontal_weight="1.36"
+        android:padding="3.5dp"
+        app:layout_constraintHorizontal_weight="1.35"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/aurora_right_column"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/hero_echo_peaks"
-            app:auroraCornerRadius="17dp" />
+            app:auroraCornerRadius="18dp" />
 
         <View
             android:layout_width="match_parent"
@@ -57,15 +57,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- FEATURED WORLD Capsule Badge -->
+            <!-- IRIS SHADERS • VERSION Capsule Badge -->
             <TextView
                 android:id="@+id/aurora_hero_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="5dp"
                 android:background="@drawable/bg_aurora_badge_pill"
                 android:fontFamily="@font/noto_sans_bold"
-                android:letterSpacing="0.08"
+                android:letterSpacing="0.06"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="3dp"
                 android:singleLine="true"
@@ -89,7 +89,7 @@
                 android:maxLines="1"
                 android:text="@string/aurora_default_world_title"
                 android:textColor="@color/aurora_text_white"
-                android:textSize="22sp"
+                android:textSize="22.5sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/play_button"
                 app:layout_constraintBottom_toTopOf="@+id/aurora_hero_subtitle" />
@@ -114,8 +114,8 @@
             <!-- Bottom-Left More Options (•••) Glass Pill -->
             <ImageButton
                 android:id="@+id/aurora_hero_more_btn"
-                android:layout_width="36dp"
-                android:layout_height="22dp"
+                android:layout_width="38dp"
+                android:layout_height="23dp"
                 android:background="@drawable/bg_aurora_more_pill"
                 android:contentDescription="@string/mcl_options"
                 android:padding="3dp"
@@ -124,25 +124,25 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- Bottom-Right Glowing Cyan-Teal PLAY Button -->
+            <!-- Bottom-Right Luminous Bioluminescent Aqua PLAY Button (Dark Ink Text) -->
             <LinearLayout
                 android:id="@+id/play_button"
                 android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:minWidth="132dp"
+                android:layout_height="46dp"
+                android:minWidth="136dp"
                 android:background="@drawable/bg_aurora_play_button"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingHorizontal="20dp"
+                android:paddingHorizontal="22dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
                     android:layout_width="15dp"
                     android:layout_height="15dp"
-                    android:src="@drawable/ic_aurora_play_triangle"
+                    android:src="@drawable/ic_aurora_play_triangle_dark"
                     android:importantForAccessibility="no" />
 
                 <TextView
@@ -152,8 +152,8 @@
                     android:fontFamily="@font/noto_sans_bold"
                     android:letterSpacing="0.06"
                     android:text="@string/aurora_play_upper"
-                    android:textColor="@color/aurora_text_white"
-                    android:textSize="14sp" />
+                    android:textColor="@color/aurora_dark_ink"
+                    android:textSize="14.5sp" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -171,110 +171,98 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- CARD 1: Live Clock & Weather Glass Widget -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/aurora_weather_card"
+        <!-- CARD 1: 3-Icon Hardware & Account Telemetry Card (Player Online • OpenJDK 21 • RAM) -->
+        <LinearLayout
+            android:id="@+id/aurora_hardware_card"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.05"
+            android:layout_weight="1.02"
             android:background="@drawable/bg_aurora_glass_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="13dp"
-            android:paddingVertical="8dp">
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="7dp">
 
-            <ImageView
-                android:id="@+id/aurora_clock_icon"
-                android:layout_width="13dp"
-                android:layout_height="13dp"
-                android:src="@drawable/ic_aurora_clock"
-                android:importantForAccessibility="no"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <FrameLayout
+                    android:id="@+id/abyssal_stat_account"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="27dp"
+                        android:layout_height="27dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_abyssal_players"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/abyssal_stat_java"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="27dp"
+                        android:layout_height="27dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_abyssal_java_colored"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/abyssal_stat_ram"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_abyssal_ram_chip"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/aurora_clock_text"
-                android:layout_width="wrap_content"
+                android:id="@+id/abyssal_hardware_summary"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:singleLine="true"
-                android:text="04:32 PM"
-                android:textColor="#D8E5FF"
-                android:textSize="10.5sp"
-                app:layout_constraintStart_toEndOf="@id/aurora_clock_icon"
-                app:layout_constraintTop_toTopOf="@id/aurora_clock_icon"
-                app:layout_constraintBottom_toBottomOf="@id/aurora_clock_icon" />
-
-            <TextView
-                android:id="@+id/aurora_temp_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/noto_sans_bold"
-                android:includeFontPadding="false"
+                android:gravity="center"
                 android:singleLine="true"
-                android:text="24°C"
+                android:text="Player Online • OpenJDK 21 • 4 GB RAM"
                 android:textColor="@color/aurora_text_white"
-                android:textSize="23sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/aurora_clock_icon"
-                app:layout_constraintBottom_toTopOf="@+id/aurora_weather_cond" />
+                android:textSize="10.5sp" />
+        </LinearLayout>
 
-            <TextView
-                android:id="@+id/aurora_weather_cond"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="Partly Cloudy"
-                android:textColor="@color/aurora_text_muted"
-                android:textSize="10.5sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/aurora_pin_icon"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-            <ImageView
-                android:id="@+id/aurora_weather_icon"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_aurora_weather_partly_cloudy"
-                android:importantForAccessibility="no"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/aurora_weather_loc" />
-
-            <ImageView
-                android:id="@+id/aurora_pin_icon"
-                android:layout_width="11dp"
-                android:layout_height="11dp"
-                android:layout_marginEnd="3dp"
-                android:src="@drawable/ic_aurora_pin"
-                android:importantForAccessibility="no"
-                app:layout_constraintEnd_toStartOf="@id/aurora_weather_loc"
-                app:layout_constraintTop_toTopOf="@id/aurora_weather_loc"
-                app:layout_constraintBottom_toBottomOf="@id/aurora_weather_loc" />
-
-            <TextView
-                android:id="@+id/aurora_weather_loc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxWidth="95dp"
-                android:singleLine="true"
-                android:text="Voxelia"
-                android:textColor="@color/aurora_text_sub"
-                android:textSize="10.5sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- CARD 2: Recently Played + View All -->
+        <!-- CARD 2: Continue Exploring + View All -->
         <LinearLayout
             android:id="@+id/aurora_recent_card"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.5"
+            android:layout_weight="1.52"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_aurora_glass_card"
             android:orientation="vertical"
@@ -312,7 +300,7 @@
                     android:textSize="10.5sp" />
             </LinearLayout>
 
-            <!-- Recent World Row 1 -->
+            <!-- Explore World Row 1 -->
             <LinearLayout
                 android:id="@+id/aurora_recent_row_1"
                 android:layout_width="match_parent"
@@ -330,7 +318,7 @@
                     android:layout_height="30dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/thumb_skyblock_odyssey"
-                    app:auroraCornerRadius="6dp" />
+                    app:auroraCornerRadius="7dp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -346,7 +334,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/noto_sans_bold"
                         android:singleLine="true"
-                        android:text="Skyblock Odyssey"
+                        android:text="Coral Caverns"
                         android:textColor="@color/aurora_text_white"
                         android:textSize="11.5sp" />
 
@@ -374,7 +362,7 @@
                     tools:ignore="UseAppTint" />
             </LinearLayout>
 
-            <!-- Recent World Row 2 -->
+            <!-- Explore World Row 2 -->
             <LinearLayout
                 android:id="@+id/aurora_recent_row_2"
                 android:layout_width="match_parent"
@@ -393,7 +381,7 @@
                     android:layout_height="30dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/thumb_caves_cliffs"
-                    app:auroraCornerRadius="6dp" />
+                    app:auroraCornerRadius="7dp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -409,7 +397,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/noto_sans_bold"
                         android:singleLine="true"
-                        android:text="Caves &amp; Cliffs"
+                        android:text="Abyssal Rift"
                         android:textColor="@color/aurora_text_white"
                         android:textSize="11.5sp" />
 
@@ -438,96 +426,62 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- CARD 3: Live Download / World Files Progress Card -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- CARD 3: Bioluminescent Ocean-Wave World Files Progress Card -->
+        <FrameLayout
             android:id="@+id/aurora_progress_card"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.95"
+            android:layout_weight="0.96"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_aurora_glass_card"
             android:clickable="true"
             android:focusable="true"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="7dp">
+            android:padding="1.5dp">
 
-            <FrameLayout
-                android:id="@+id/aurora_progress_badge"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="@drawable/bg_aurora_circle_download"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+            <!-- Glowing Bioluminescent Liquid Wave Fill -->
+            <net.kdt.pojavlaunch.dashboard.AbyssalWaveProgressView
+                android:id="@+id/abyssal_wave_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-                <ImageView
-                    android:id="@+id/aurora_progress_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_aurora_download"
-                    android:importantForAccessibility="no" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/aurora_progress_title"
-                android:layout_width="0dp"
+            <!-- Top Status Header over the Wave -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/noto_sans_bold"
-                android:singleLine="true"
-                android:text="@string/aurora_updating_world_files"
-                android:textColor="@color/aurora_text_white"
-                android:textSize="11sp"
-                app:layout_constraintStart_toEndOf="@id/aurora_progress_badge"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/aurora_progress_bar" />
+                android:orientation="vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingTop="8dp">
 
-            <ProgressBar
-                android:id="@+id/aurora_progress_bar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="5dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="8dp"
-                android:max="100"
-                android:progress="100"
-                android:progressDrawable="@drawable/progress_aurora_horizontal"
-                app:layout_constraintStart_toEndOf="@id/aurora_progress_badge"
-                app:layout_constraintEnd_toStartOf="@+id/aurora_progress_percent"
-                app:layout_constraintTop_toBottomOf="@id/aurora_progress_title"
-                app:layout_constraintBottom_toTopOf="@+id/aurora_progress_subtitle" />
+                <TextView
+                    android:id="@+id/aurora_progress_header_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/noto_sans_bold"
+                    android:singleLine="true"
+                    android:shadowColor="#B3021420"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowRadius="3"
+                    android:text="World Files Ready • 100%"
+                    android:textColor="@color/aurora_text_white"
+                    android:textSize="11sp" />
 
-            <TextView
-                android:id="@+id/aurora_progress_percent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/noto_sans_bold"
-                android:singleLine="true"
-                android:text="100%"
-                android:textColor="@color/aurora_text_white"
-                android:textSize="10.5sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/aurora_progress_bar"
-                app:layout_constraintBottom_toBottomOf="@id/aurora_progress_bar" />
-
-            <TextView
-                android:id="@+id/aurora_progress_subtitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="Ready to launch"
-                android:textColor="@color/aurora_text_muted"
-                android:textSize="9.5sp"
-                app:layout_constraintStart_toEndOf="@id/aurora_progress_badge"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/aurora_progress_bar"
-                app:layout_constraintBottom_toBottomOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/aurora_progress_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:shadowColor="#B3021420"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:text="Tap to verify or pre-sync game files"
+                    android:textColor="#D9E2FAFF"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </FrameLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

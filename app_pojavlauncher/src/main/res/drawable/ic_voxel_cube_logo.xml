@@ -4,28 +4,20 @@
     android:height="32dp"
     android:viewportWidth="32"
     android:viewportHeight="32">
-    <!-- Top face (crisp white-ice diamond) -->
+    <!-- Top diamond face (bright electric aqua) -->
     <path
-        android:fillColor="#F4FAFF"
-        android:pathData="M16,2.5 L28,9.4 L16,16.3 L4,9.4 Z" />
-    <!-- Inner teal-indigo diamond accent on top face -->
+        android:fillColor="#47FFEF"
+        android:pathData="M16,3 L28,9.8 L16,16.6 L4,9.8 Z" />
+    <!-- Left face (vivid bioluminescent aqua) -->
     <path
-        android:fillColor="#2DA8C8"
-        android:pathData="M16,6.1 L22.2,9.6 L16,13.1 L9.8,9.6 Z" />
-    <!-- Left face (cool ice-blue) -->
+        android:fillColor="#00F5D4"
+        android:pathData="M4,9.8 L15.2,16.2 L15.2,29 L4,22.4 Z" />
+    <!-- Right face (deep ocean cyan) -->
     <path
-        android:fillColor="#DCEBFA"
-        android:pathData="M4,9.4 L16,16.3 L16,29.5 L4,22.6 Z" />
-    <!-- Left face inner voxel recess -->
+        android:fillColor="#06B6D4"
+        android:pathData="M16.8,16.2 L28,9.8 L28,22.4 L16.8,29 Z" />
+    <!-- Dark abyssal inner crease highlights -->
     <path
-        android:fillColor="#6FAEE0"
-        android:pathData="M8.5,16.2 L12.8,18.7 L12.8,24.2 L8.5,21.7 Z" />
-    <!-- Right face (vibrant aurora cyan-teal) -->
-    <path
-        android:fillColor="#44D7D6"
-        android:pathData="M16,16.3 L28,9.4 L28,22.6 L16,29.5 Z" />
-    <!-- Right face subtle shadow facet -->
-    <path
-        android:fillColor="#29AAB8"
-        android:pathData="M19.2,18.7 L23.5,16.2 L23.5,21.7 L19.2,24.2 Z" />
+        android:fillColor="#042430"
+        android:pathData="M15.3,16 L16.7,16 L16.7,29.2 L15.3,29.2 Z" />
 </vector>

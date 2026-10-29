@@ -3,37 +3,38 @@
     <color name="control_button_color">#4CC4C4C4</color>
     <color name="control_button_pressed_color">#4D000000</color>
 
-    <!-- Core Launcher Palette — Aurora Glass Theme -->
-    <color name="minebutton_color">#2DD4BF</color>
-    <color name="background_app">#9E0D152E</color>
-    <color name="divider">#29FFFFFF</color>
-    <color name="background_overlay">#331E2D5E</color>
-    <color name="background_status_bar">#B8101A3B</color>
-    <color name="background_bottom_bar">#C20C132B</color>
+    <!-- Core Launcher Palette — Abyssal Bioluminescent Ocean Glass (#02) -->
+    <color name="minebutton_color">#00F5D4</color>
+    <color name="background_app">#B8061728</color>
+    <color name="divider">#2967E8F9</color>
+    <color name="background_overlay">#380B2945</color>
+    <color name="background_status_bar">#C2071A2E</color>
+    <color name="background_bottom_bar">#CC051322</color>
 
     <color name="primary_text">#FFFFFF</color>
-    <color name="secondary_text">#B8C7E4</color>
+    <color name="secondary_text">#B6DCEB</color>
 
-    <!-- Aurora Glass Design System Tokens -->
-    <color name="aurora_bg_deep">#090E22</color>
-    <color name="aurora_glass_header">#471F2C5C</color>
-    <color name="aurora_glass_rail">#381B2752</color>
-    <color name="aurora_glass_card_top">#5226376E</color>
-    <color name="aurora_glass_card_bottom">#3D162147</color>
-    <color name="aurora_glass_pill">#24FFFFFF</color>
-    <color name="aurora_glass_border">#45FFFFFF</color>
-    <color name="aurora_glass_border_soft">#2BFFFFFF</color>
-    <color name="aurora_glass_border_active">#995EF2E8</color>
+    <!-- Abyssal Ocean Glass Design System Tokens -->
+    <color name="aurora_bg_deep">#04101D</color>
+    <color name="aurora_glass_header">#99081F36</color>
+    <color name="aurora_glass_rail">#66071C30</color>
+    <color name="aurora_glass_card_top">#B00A2540</color>
+    <color name="aurora_glass_card_bottom">#BF061729</color>
+    <color name="aurora_glass_pill">#245EF2E8</color>
+    <color name="aurora_glass_border">#4772F6EB</color>
+    <color name="aurora_glass_border_soft">#2E5EEAD4</color>
+    <color name="aurora_glass_border_active">#CC00F5D4</color>
 
-    <color name="aurora_teal_bright">#5EF2E8</color>
-    <color name="aurora_teal_primary">#2DD4BF</color>
-    <color name="aurora_teal_mid">#1FB6C4</color>
-    <color name="aurora_teal_deep">#13798B</color>
-    <color name="aurora_cyan_link">#5CE1E6</color>
-    <color name="aurora_online_dot">#22C58B</color>
-    <color name="aurora_offline_dot">#F59E0B</color>
+    <color name="aurora_teal_bright">#19FFE6</color>
+    <color name="aurora_teal_primary">#00F5D4</color>
+    <color name="aurora_teal_mid">#00D4B8</color>
+    <color name="aurora_teal_deep">#065F6B</color>
+    <color name="aurora_cyan_link">#47F7E5</color>
+    <color name="aurora_dark_ink">#032229</color>
+    <color name="aurora_online_dot">#00F5A8</color>
+    <color name="aurora_offline_dot">#FBBF24</color>
 
     <color name="aurora_text_white">#FFFFFF</color>
-    <color name="aurora_text_sub">#CCDBE8FF</color>
-    <color name="aurora_text_muted">#99B4C6E4</color>
+    <color name="aurora_text_sub">#D4EEF8</color>
+    <color name="aurora_text_muted">#94BFD4</color>
 </resources>

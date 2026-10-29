@@ -2,14 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <layer-list>
-            <!-- Soft outer cyan glow -->
+            <!-- Soft outer bioluminescent aqua glow -->
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="999dp" />
-                    <solid android:color="#385EF2E8" />
+                    <solid android:color="#4500F5D4" />
                 </shape>
             </item>
-            <!-- Crisp cyan-teal active pill -->
+            <!-- Crisp glowing aqua active pill -->
             <item
                 android:left="1dp"
                 android:top="1dp"
@@ -19,8 +19,8 @@
                     <corners android:radius="999dp" />
                     <gradient
                         android:angle="90"
-                        android:startColor="#6614B8A6"
-                        android:endColor="#852DD4BF"
+                        android:startColor="#7300C9B7"
+                        android:endColor="#9900F5D4"
                         android:type="linear" />
                     <stroke
                         android:width="1.4dp"
@@ -32,7 +32,7 @@
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="999dp" />
-            <solid android:color="#26FFFFFF" />
+            <solid android:color="#2600F5D4" />
         </shape>
     </item>
     <item>

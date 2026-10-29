@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import net.kdt.pojavlaunch.CustomControlsActivity;
@@ -26,11 +25,12 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.dashboard.AuroraAccountController;
 import net.kdt.pojavlaunch.dashboard.AuroraSegmentedHubDialog;
 import net.kdt.pojavlaunch.dashboard.DashboardProgressController;
-import net.kdt.pojavlaunch.dashboard.LiveWeatherUpdater;
 import net.kdt.pojavlaunch.dashboard.RoundedImageView;
 import net.kdt.pojavlaunch.dashboard.WorldSaveScanner;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
+import net.kdt.pojavlaunch.multirt.MultiRTUtils;
+import net.kdt.pojavlaunch.multirt.Runtime;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceJavaFragment;
@@ -47,9 +47,9 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Aurora Glass Home Dashboard Fragment.
+ * Abyssal Bioluminescent Ocean Glass (#02) Home Dashboard Fragment.
  */
-public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.WeatherListener {
+public class MainMenuFragment extends Fragment {
     public static final String TAG = "MainMenuFragment";
 
     private RoundedImageView mHeroImage;
@@ -58,11 +58,7 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
     private TextView mHeroSubtitle;
     private TextView mHeroVersionChip;
 
-    private TextView mClockText;
-    private TextView mTempText;
-    private TextView mWeatherCond;
-    private TextView mWeatherLoc;
-    private ImageView mWeatherIcon;
+    private TextView mHardwareSummary;
 
     private View mRecentRow1;
     private RoundedImageView mRecentThumb1;
@@ -76,7 +72,6 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
     private TextView mRecentSub2;
     private ImageButton mRecentPlay2;
 
-    private LiveWeatherUpdater mWeatherUpdater;
     private DashboardProgressController mProgressController;
 
     private WorldSaveScanner.DashboardWorldItem mFeaturedItem;
@@ -90,7 +85,6 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // Consume any pending version refresh flag from ProfileEditorFragment
         String refreshedProfile = (String) ExtraCore.consumeValue(ExtraConstants.REFRESH_VERSION_SPINNER);
         if (Tools.isValidString(refreshedProfile)
                 && !ProfileEditorFragment.DELETED_PROFILE.equals(refreshedProfile)) {
@@ -105,11 +99,10 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         mHeroSubtitle = view.findViewById(R.id.aurora_hero_subtitle);
         mHeroVersionChip = view.findViewById(R.id.aurora_hero_version_chip);
 
-        mClockText = view.findViewById(R.id.aurora_clock_text);
-        mTempText = view.findViewById(R.id.aurora_temp_text);
-        mWeatherCond = view.findViewById(R.id.aurora_weather_cond);
-        mWeatherLoc = view.findViewById(R.id.aurora_weather_loc);
-        mWeatherIcon = view.findViewById(R.id.aurora_weather_icon);
+        mHardwareSummary = view.findViewById(R.id.abyssal_hardware_summary);
+        View statAccount = view.findViewById(R.id.abyssal_stat_account);
+        View statJava = view.findViewById(R.id.abyssal_stat_java);
+        View statRam = view.findViewById(R.id.abyssal_stat_ram);
 
         mRecentRow1 = view.findViewById(R.id.aurora_recent_row_1);
         mRecentThumb1 = view.findViewById(R.id.aurora_recent_thumb_1);
@@ -126,22 +119,31 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         View playButton = view.findViewById(R.id.play_button);
         ImageButton moreBtn = view.findViewById(R.id.aurora_hero_more_btn);
         View viewAllBtn = view.findViewById(R.id.aurora_view_all_btn);
-        View weatherCard = view.findViewById(R.id.aurora_weather_card);
         View progressCard = view.findViewById(R.id.aurora_progress_card);
 
         playButton.setOnClickListener(v -> launchDashboardItem(mFeaturedItem));
         moreBtn.setOnClickListener(v -> showHeroQuickActionsDialog());
         mHeroVersionChip.setOnClickListener(v -> showProfileSelectorDialog());
 
-        viewAllBtn.setOnClickListener(v -> {
+        statAccount.setOnClickListener(v -> {
             if (getActivity() instanceof LauncherActivity) {
-                ((LauncherActivity) getActivity()).navigateToTab(LauncherActivity.TAB_WORLDS, null);
+                ((LauncherActivity) getActivity()).openQuickAccountSheet();
+            }
+        });
+        statJava.setOnClickListener(v -> {
+            if (getActivity() instanceof LauncherActivity) {
+                ((LauncherActivity) getActivity()).navigateToTab(LauncherActivity.TAB_JAVA, null);
+            }
+        });
+        statRam.setOnClickListener(v -> {
+            if (getActivity() instanceof LauncherActivity) {
+                ((LauncherActivity) getActivity()).navigateToTab(LauncherActivity.TAB_JAVA, null);
             }
         });
 
-        weatherCard.setOnClickListener(v -> {
-            if (mWeatherUpdater != null) {
-                mWeatherUpdater.toggleUnitAndRefresh();
+        viewAllBtn.setOnClickListener(v -> {
+            if (getActivity() instanceof LauncherActivity) {
+                ((LauncherActivity) getActivity()).navigateToTab(LauncherActivity.TAB_WORLDS, null);
             }
         });
 
@@ -153,7 +155,6 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
 
         progressCard.setOnClickListener(v -> triggerFileSyncOrStatus());
 
-        mWeatherUpdater = new LiveWeatherUpdater(requireContext(), this);
         mProgressController = new DashboardProgressController(progressCard);
         mProgressController.attach();
 
@@ -161,14 +162,12 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
             mSearchFilter = ((LauncherActivity) getActivity()).getCurrentSearchQuery();
         }
         refreshDashboardData();
+        refreshHardwareTelemetry();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (mWeatherUpdater != null) {
-            mWeatherUpdater.start();
-        }
         String refreshedProfile = (String) ExtraCore.consumeValue(ExtraConstants.REFRESH_VERSION_SPINNER);
         if (Tools.isValidString(refreshedProfile)
                 && !ProfileEditorFragment.DELETED_PROFILE.equals(refreshedProfile)) {
@@ -177,24 +176,14 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
                     .apply();
         }
         refreshDashboardData();
+        refreshHardwareTelemetry();
         if (mProgressController != null) {
             mProgressController.refreshIdleState();
         }
     }
 
     @Override
-    public void onPause() {
-        if (mWeatherUpdater != null) {
-            mWeatherUpdater.stop();
-        }
-        super.onPause();
-    }
-
-    @Override
     public void onDestroyView() {
-        if (mWeatherUpdater != null) {
-            mWeatherUpdater.stop();
-        }
         if (mProgressController != null) {
             mProgressController.detach();
         }
@@ -206,6 +195,78 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         if (isAdded()) {
             refreshDashboardData();
         }
+    }
+
+    public void refreshHardwareTelemetry() {
+        if (!isAdded() || mHardwareSummary == null) return;
+
+        // 1. Player Status
+        String playerStatus = "Sign In";
+        if (getActivity() instanceof LauncherActivity) {
+            AuroraAccountController ctrl = ((LauncherActivity) getActivity()).getAccountController();
+            if (ctrl != null) {
+                MinecraftAccount acc = ctrl.getSelectedAccount();
+                if (acc != null && Tools.isValidString(acc.username)) {
+                    playerStatus = acc.username + " Online";
+                }
+            }
+        }
+
+        // 2. Active OpenJDK Runtime
+        String jdkLabel = resolveOpenJdkLabel();
+
+        // 3. Allocated RAM
+        int ramMb = LauncherPreferences.PREF_RAM_ALLOCATION;
+        String ramLabel;
+        if (ramMb >= 1024) {
+            if (ramMb % 1024 == 0) {
+                ramLabel = (ramMb / 1024) + " GB RAM";
+            } else {
+                ramLabel = String.format(Locale.US, "%.1f GB RAM", ramMb / 1024f);
+            }
+        } else {
+            ramLabel = ramMb + " MB RAM";
+        }
+
+        mHardwareSummary.setText(playerStatus + " • " + jdkLabel + " • " + ramLabel);
+    }
+
+    @NonNull
+    private String resolveOpenJdkLabel() {
+        try {
+            List<Runtime> runtimes = MultiRTUtils.getRuntimes();
+            if (runtimes != null && !runtimes.isEmpty()) {
+                String preferred = LauncherPreferences.PREF_DEFAULT_RUNTIME;
+                WorldSaveScanner.ensureProfilesInitialized(requireContext());
+                String key = LauncherPreferences.DEFAULT_PREF.getString(
+                        LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
+                MinecraftProfile prof = LauncherProfiles.mainProfileJson != null
+                        ? LauncherProfiles.mainProfileJson.profiles.get(key) : null;
+                if (prof != null && Tools.isValidString(prof.javaDir)
+                        && prof.javaDir.startsWith(Tools.LAUNCHERPROFILES_RTPREFIX)) {
+                    preferred = prof.javaDir.substring(Tools.LAUNCHERPROFILES_RTPREFIX.length());
+                }
+
+                Runtime matched = null;
+                int highestVer = 0;
+                for (Runtime rt : runtimes) {
+                    if (rt.javaVersion > highestVer) {
+                        highestVer = rt.javaVersion;
+                    }
+                    if (Tools.isValidString(preferred) && preferred.equals(rt.name)) {
+                        matched = rt;
+                    }
+                }
+                if (matched != null && matched.javaVersion > 0) {
+                    return "OpenJDK " + matched.javaVersion;
+                }
+                if (highestVer > 0) {
+                    return "OpenJDK " + highestVer;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return "OpenJDK 21";
     }
 
     public void refreshDashboardData() {
@@ -233,7 +294,6 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
 
         bindHero(mFeaturedItem);
 
-        // Pick up to 2 recent items distinct from featured when available
         List<WorldSaveScanner.DashboardWorldItem> recents = new ArrayList<>();
         for (WorldSaveScanner.DashboardWorldItem candidate : pool) {
             if (!candidate.id.equals(mFeaturedItem.id)) {
@@ -252,7 +312,19 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
     }
 
     private void bindHero(@NonNull WorldSaveScanner.DashboardWorldItem item) {
-        mHeroBadge.setText(R.string.aurora_featured_world_badge);
+        String verLower = item.versionId.toLowerCase(Locale.ROOT);
+        String loaderPrefix = "IRIS SHADERS";
+        if (verLower.contains("fabric")) loaderPrefix = "FABRIC";
+        else if (verLower.contains("quilt")) loaderPrefix = "QUILT";
+        else if (verLower.contains("neoforge")) loaderPrefix = "NEOFORGE";
+        else if (verLower.contains("forge")) loaderPrefix = "FORGE";
+        else if (verLower.contains("optifine")) loaderPrefix = "OPTIFINE";
+
+        String shortVer = item.versionId;
+        if (shortVer.length() > 18) {
+            shortVer = shortVer.substring(0, 18);
+        }
+        mHeroBadge.setText((loaderPrefix + " • " + shortVer).toUpperCase(Locale.ROOT));
         mHeroTitle.setText(item.title);
         mHeroSubtitle.setText(item.description);
         mHeroVersionChip.setText(item.versionId + " ▾");
@@ -287,6 +359,7 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         if (item == null || !isAdded()) return;
         WorldSaveScanner.setFeaturedAndSelectProfile(requireContext(), item);
         refreshDashboardData();
+        refreshHardwareTelemetry();
         if (mProgressController != null) {
             mProgressController.refreshIdleState();
         }
@@ -374,7 +447,8 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         final List<WorldSaveScanner.DashboardWorldItem> items = WorldSaveScanner.scanAllItems(requireContext());
         final String activeProfileKey = LauncherPreferences.DEFAULT_PREF.getString(
                 LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
-        final String activeFeaturedId = mFeaturedItem != null ? mFeaturedItem.id : "";
+        final String activeFeaturedId = mFeaturedItem != null
+                ? mFeaturedItem.id : WorldSaveScanner.getFeaturedId(requireContext());
 
         List<AuroraSegmentedHubDialog.HubCardItem> cards = new ArrayList<>();
         for (final WorldSaveScanner.DashboardWorldItem it : items) {
@@ -476,7 +550,7 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
                     @Override
                     public void onOpenJavaSettings() {
                         Tools.swapFragment(requireActivity(), LauncherPreferenceJavaFragment.class,
-                                "LauncherPreferenceJavaFragment", null);
+                                LauncherActivity.JAVA_FRAGMENT_TAG, null);
                     }
 
                     @Override
@@ -517,22 +591,5 @@ public class MainMenuFragment extends Fragment implements LiveWeatherUpdater.Wea
         } else {
             Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public void onClockTick(@NonNull String formattedTime) {
-        if (mClockText != null) {
-            mClockText.setText(formattedTime);
-        }
-    }
-
-    @Override
-    public void onWeatherUpdated(@NonNull String tempText, @NonNull String conditionText,
-                                 @NonNull String locationText, int iconRes) {
-        if (!isAdded()) return;
-        mTempText.setText(tempText);
-        mWeatherCond.setText(conditionText);
-        mWeatherLoc.setText(locationText);
-        mWeatherIcon.setImageResource(iconRes);
     }
 }

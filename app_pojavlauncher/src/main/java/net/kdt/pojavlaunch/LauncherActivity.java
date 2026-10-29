@@ -56,6 +56,7 @@ import net.kdt.pojavlaunch.modloaders.modpacks.ModloaderInstallTracker;
 import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.IconCacheJanitor;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceFragment;
+import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceJavaFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.progresskeeper.TaskCountListener;
 import net.kdt.pojavlaunch.services.ProgressServiceKeeper;
@@ -77,11 +78,15 @@ import java.util.List;
 
 public class LauncherActivity extends BaseActivity implements AuroraAccountController.AccountStateListener {
     public static final String SETTING_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
+    public static final String JAVA_FRAGMENT_TAG = "JAVA_PREF_FRAGMENT";
 
     public static final int TAB_HOME = 0;
     public static final int TAB_WORLDS = 1;
     public static final int TAB_MARKETPLACE = 2;
-    public static final int TAB_PROFILE = 3;
+    public static final int TAB_MODS = TAB_MARKETPLACE;
+    public static final int TAB_JAVA = 3;
+    public static final int TAB_PROFILE = 4;
+    public static final int TAB_SETTINGS = TAB_PROFILE;
 
     public final ActivityResultLauncher<Object> modInstallerLauncher =
             registerForActivityResult(new OpenDocumentWithExtension("jar"), data -> {
@@ -106,9 +111,10 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
     private RoundedImageView mAvatarImage;
     private View mAvatarStatusDot;
 
-    private View mNavHome, mNavWorlds, mNavMarketplace, mNavProfile;
-    private ImageView mNavHomeIcon, mNavWorldsIcon, mNavMarketplaceIcon, mNavProfileIcon;
-    private TextView mNavHomeLabel, mNavWorldsLabel, mNavMarketplaceLabel, mNavProfileLabel;
+    private View mNavHome, mNavWorlds, mNavMarketplace, mNavJava, mNavProfile;
+    private View mNavHomeOrb, mNavWorldsOrb, mNavMarketplaceOrb, mNavJavaOrb, mNavProfileOrb;
+    private ImageView mNavHomeIcon, mNavWorldsIcon, mNavMarketplaceIcon, mNavJavaIcon, mNavProfileIcon;
+    private TextView mNavHomeLabel, mNavWorldsLabel, mNavMarketplaceLabel, mNavJavaLabel, mNavProfileLabel;
 
     private String mCurrentSearchQuery = "";
     @Nullable private String mPendingQuickPlayWorld = null;
@@ -243,9 +249,10 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         mNavHome.setOnClickListener(v -> navigateToTab(TAB_HOME, null));
         mNavWorlds.setOnClickListener(v -> navigateToTab(TAB_WORLDS, null));
         mNavMarketplace.setOnClickListener(v -> navigateToTab(TAB_MARKETPLACE, null));
+        mNavJava.setOnClickListener(v -> navigateToTab(TAB_JAVA, null));
         mNavProfile.setOnClickListener(v -> navigateToTab(TAB_PROFILE, null));
 
-        mAvatarContainer.setOnClickListener(v -> showQuickAccountDialog());
+        mAvatarContainer.setOnClickListener(v -> openQuickAccountSheet());
 
         mSearchClear.setOnClickListener(v -> {
             mSearchInput.setText("");
@@ -311,6 +318,10 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
                 updateNavSelection(TAB_MARKETPLACE);
                 Tools.swapFragment(this, SearchModFragment.class, SearchModFragment.TAG, null);
                 break;
+            case TAB_JAVA:
+                updateNavSelection(TAB_JAVA);
+                Tools.swapFragment(this, LauncherPreferenceJavaFragment.class, JAVA_FRAGMENT_TAG, null);
+                break;
             case TAB_PROFILE:
                 updateNavSelection(TAB_PROFILE);
                 Tools.swapFragment(this, ProfileDashboardFragment.class, ProfileDashboardFragment.TAG, null);
@@ -319,8 +330,7 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
     }
 
     private void syncShellForFragment(@NonNull Fragment f) {
-        boolean isHome = f instanceof MainMenuFragment;
-        if (isHome) {
+        if (f instanceof MainMenuFragment) {
             updateNavSelection(TAB_HOME);
             mBackChip.setVisibility(View.GONE);
         } else if (f instanceof WorldsFragment) {
@@ -329,6 +339,9 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         } else if (f instanceof SearchModFragment) {
             updateNavSelection(TAB_MARKETPLACE);
             mBackChip.setVisibility(View.GONE);
+        } else if (f instanceof LauncherPreferenceJavaFragment) {
+            updateNavSelection(TAB_JAVA);
+            mBackChip.setVisibility(View.VISIBLE);
         } else if (f instanceof ProfileDashboardFragment
                 || f instanceof SelectAuthFragment
                 || f instanceof MicrosoftLoginFragment
@@ -352,25 +365,28 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
     }
 
     private void updateNavSelection(int activeTab) {
-        applyNavItemState(mNavHome, mNavHomeIcon, mNavHomeLabel, activeTab == TAB_HOME);
-        applyNavItemState(mNavWorlds, mNavWorldsIcon, mNavWorldsLabel, activeTab == TAB_WORLDS);
-        applyNavItemState(mNavMarketplace, mNavMarketplaceIcon, mNavMarketplaceLabel, activeTab == TAB_MARKETPLACE);
-        applyNavItemState(mNavProfile, mNavProfileIcon, mNavProfileLabel, activeTab == TAB_PROFILE);
+        applyNavItemState(mNavHomeOrb, mNavHomeIcon, mNavHomeLabel, activeTab == TAB_HOME);
+        applyNavItemState(mNavWorldsOrb, mNavWorldsIcon, mNavWorldsLabel, activeTab == TAB_WORLDS);
+        applyNavItemState(mNavMarketplaceOrb, mNavMarketplaceIcon, mNavMarketplaceLabel, activeTab == TAB_MARKETPLACE);
+        applyNavItemState(mNavJavaOrb, mNavJavaIcon, mNavJavaLabel, activeTab == TAB_JAVA);
+        applyNavItemState(mNavProfileOrb, mNavProfileIcon, mNavProfileLabel, activeTab == TAB_PROFILE);
     }
 
-    private void applyNavItemState(View container, ImageView icon, TextView label, boolean active) {
-        container.setSelected(active);
+    private void applyNavItemState(View orb, ImageView icon, TextView label, boolean active) {
+        if (orb != null) {
+            orb.setSelected(active);
+        }
         int iconTint = ContextCompat.getColor(this,
-                active ? R.color.aurora_teal_bright : R.color.aurora_text_sub);
+                active ? R.color.aurora_dark_ink : R.color.aurora_text_white);
         icon.setColorFilter(iconTint);
         label.setTextColor(ContextCompat.getColor(this,
-                active ? R.color.aurora_text_white : R.color.aurora_text_sub));
+                active ? R.color.aurora_teal_bright : R.color.aurora_text_sub));
         Typeface bold = ResourcesCompat.getFont(this, R.font.noto_sans_bold);
         label.setTypeface(active && bold != null ? bold : Typeface.DEFAULT,
                 active ? Typeface.BOLD : Typeface.NORMAL);
     }
 
-    private void showQuickAccountDialog() {
+    public void openQuickAccountSheet() {
         if (mAccountController == null) return;
         final List<String> saved = mAccountController.getSavedAccountNames();
         final MinecraftAccount active = mAccountController.getSelectedAccount();
@@ -416,7 +432,7 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
                     ));
                     cards.add(new AuroraSegmentedHubDialog.HubCardItem(
                             R.drawable.ic_hub_launcher_settings,
-                            "Profile & Launcher Settings",
+                            "Settings & Accounts Hub",
                             "Manage accounts, Java runtimes, controls & preferences",
                             "Open",
                             () -> navigateToTab(TAB_PROFILE, null)
@@ -457,7 +473,6 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         String normalizedVersionId = AsyncMinecraftDownloader.normalizeVersionId(prof.lastVersionId);
         if (MinecraftProfile.LATEST_RELEASE.equals(normalizedVersionId)
                 || MinecraftProfile.LATEST_SNAPSHOT.equals(normalizedVersionId)) {
-            // Version table hasn't finished loading yet; resolve it now and launch immediately
             String installedFallback = findFirstInstalledVersion();
             if (!Tools.isOnline(this) && installedFallback != null) {
                 startVersionDownloadAndLaunch(selectedAccount, installedFallback);
@@ -594,11 +609,14 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
             }
             mAvatarStatusDot.setBackgroundResource(R.drawable.bg_aurora_status_dot);
         }
+        Fragment active = getSupportFragmentManager().findFragmentById(R.id.container_fragment);
+        if (active instanceof MainMenuFragment) {
+            ((MainMenuFragment) active).refreshHardwareTelemetry();
+        }
     }
 
     @Override
     public void onLoginProgress(int step, int maxSteps) {
-        // Handled smoothly via account state callbacks
     }
 
     @Override
@@ -740,16 +758,25 @@ public class LauncherActivity extends BaseActivity implements AuroraAccountContr
         mNavHome = findViewById(R.id.aurora_nav_home);
         mNavWorlds = findViewById(R.id.aurora_nav_worlds);
         mNavMarketplace = findViewById(R.id.aurora_nav_marketplace);
+        mNavJava = findViewById(R.id.aurora_nav_java);
         mNavProfile = findViewById(R.id.aurora_nav_profile);
+
+        mNavHomeOrb = findViewById(R.id.aurora_nav_home_orb);
+        mNavWorldsOrb = findViewById(R.id.aurora_nav_worlds_orb);
+        mNavMarketplaceOrb = findViewById(R.id.aurora_nav_marketplace_orb);
+        mNavJavaOrb = findViewById(R.id.aurora_nav_java_orb);
+        mNavProfileOrb = findViewById(R.id.aurora_nav_profile_orb);
 
         mNavHomeIcon = findViewById(R.id.aurora_nav_home_icon);
         mNavWorldsIcon = findViewById(R.id.aurora_nav_worlds_icon);
         mNavMarketplaceIcon = findViewById(R.id.aurora_nav_marketplace_icon);
+        mNavJavaIcon = findViewById(R.id.aurora_nav_java_icon);
         mNavProfileIcon = findViewById(R.id.aurora_nav_profile_icon);
 
         mNavHomeLabel = findViewById(R.id.aurora_nav_home_label);
         mNavWorldsLabel = findViewById(R.id.aurora_nav_worlds_label);
         mNavMarketplaceLabel = findViewById(R.id.aurora_nav_marketplace_label);
+        mNavJavaLabel = findViewById(R.id.aurora_nav_java_label);
         mNavProfileLabel = findViewById(R.id.aurora_nav_profile_label);
     }
 }

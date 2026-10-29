@@ -42,13 +42,14 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Discovers real Minecraft saves (.minecraft/saves/* with NBT level.dat & icon.png)
- * and LauncherProfiles, maintaining genuine Recently Played and Featured World state.
+ * and LauncherProfiles, maintaining genuine Continue Exploring and Featured World state.
  */
 public class WorldSaveScanner {
     private static final String PREF_NAME = "apex_aurora_dashboard";
     private static final String KEY_FEATURED_ID = "featured_item_id";
     private static final String KEY_LAST_PLAYED_PREFIX = "played_ts_";
     private static final String KEY_DESC_PREFIX = "world_desc_";
+    private static final String KEY_ABYSSAL_MIGRATED = "abyssal_v2_seeded";
 
     public static class DashboardWorldItem {
         public String id;
@@ -76,10 +77,15 @@ public class WorldSaveScanner {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
+    @NonNull
+    public static String getFeaturedId(@NonNull Context context) {
+        return getPrefs(context).getString(KEY_FEATURED_ID, "");
+    }
+
     /**
      * Ensures LauncherProfiles is initialized. On a brand-new installation where
      * launcher_profiles.json does not exist yet, seeds starter adventure profiles
-     * matching the Aurora Glass dashboard so every card is immediately playable.
+     * matching the Abyssal Bioluminescent Ocean Glass (#02) dashboard so every card is playable.
      */
     public static synchronized void ensureProfilesInitialized(@NonNull Context context) {
         File profilesFile = new File(Tools.GAME_PROFILES_FILE);
@@ -90,44 +96,76 @@ public class WorldSaveScanner {
             LauncherProfiles.mainProfileJson.profiles = new HashMap<>();
 
             long now = System.currentTimeMillis();
-            String echoKey = UUID.randomUUID().toString();
-            MinecraftProfile echo = new MinecraftProfile();
-            echo.name = "Echo Peaks";
-            echo.lastVersionId = MinecraftProfile.LATEST_RELEASE;
-            LauncherProfiles.mainProfileJson.profiles.put(echoKey, echo);
+            String atlantisKey = UUID.randomUUID().toString();
+            MinecraftProfile atlantis = new MinecraftProfile();
+            atlantis.name = "Atlantis Depths";
+            atlantis.lastVersionId = MinecraftProfile.LATEST_RELEASE;
+            LauncherProfiles.mainProfileJson.profiles.put(atlantisKey, atlantis);
 
-            String skyKey = UUID.randomUUID().toString();
-            MinecraftProfile sky = new MinecraftProfile();
-            sky.name = "Skyblock Odyssey";
-            sky.lastVersionId = MinecraftProfile.LATEST_RELEASE;
-            LauncherProfiles.mainProfileJson.profiles.put(skyKey, sky);
+            String coralKey = UUID.randomUUID().toString();
+            MinecraftProfile coral = new MinecraftProfile();
+            coral.name = "Coral Caverns";
+            coral.lastVersionId = MinecraftProfile.LATEST_RELEASE;
+            LauncherProfiles.mainProfileJson.profiles.put(coralKey, coral);
 
-            String cavesKey = UUID.randomUUID().toString();
-            MinecraftProfile caves = new MinecraftProfile();
-            caves.name = "Caves & Cliffs";
-            caves.lastVersionId = MinecraftProfile.LATEST_RELEASE;
-            LauncherProfiles.mainProfileJson.profiles.put(cavesKey, caves);
+            String riftKey = UUID.randomUUID().toString();
+            MinecraftProfile rift = new MinecraftProfile();
+            rift.name = "Abyssal Rift";
+            rift.lastVersionId = MinecraftProfile.LATEST_RELEASE;
+            LauncherProfiles.mainProfileJson.profiles.put(riftKey, rift);
 
             LauncherProfiles.write();
 
             prefs.edit()
-                    .putString(KEY_FEATURED_ID, "profile:" + echoKey)
-                    .putString(KEY_DESC_PREFIX + "profile:" + echoKey,
-                            "A tranquil voxel adventure\nsurrounded by mystery.")
-                    .putString(KEY_DESC_PREFIX + "profile:" + skyKey,
-                            "Survive high above the clouds on a floating island.")
-                    .putString(KEY_DESC_PREFIX + "profile:" + cavesKey,
-                            "Explore deep subterranean caverns and towering peaks.")
-                    .putLong(KEY_LAST_PLAYED_PREFIX + "profile:" + echoKey, now)
-                    .putLong(KEY_LAST_PLAYED_PREFIX + "profile:" + skyKey, now - (2L * 3600_000L))
-                    .putLong(KEY_LAST_PLAYED_PREFIX + "profile:" + cavesKey, now - (24L * 3600_000L))
+                    .putBoolean(KEY_ABYSSAL_MIGRATED, true)
+                    .putString(KEY_FEATURED_ID, "profile:" + atlantisKey)
+                    .putString(KEY_DESC_PREFIX + "profile:" + atlantisKey,
+                            "Submerge into glowing coral canyons\nand ancient sea-lantern ruins.")
+                    .putString(KEY_DESC_PREFIX + "profile:" + coralKey,
+                            "Explore vibrant bioluminescent reef tunnels and jellyfish grottos.")
+                    .putString(KEY_DESC_PREFIX + "profile:" + riftKey,
+                            "Venture into deep prismarine trenches lit by sea-lanterns.")
+                    .putLong(KEY_LAST_PLAYED_PREFIX + "profile:" + atlantisKey, now)
+                    .putLong(KEY_LAST_PLAYED_PREFIX + "profile:" + coralKey, now - (2L * 3600_000L))
+                    .putLong(KEY_LAST_PLAYED_PREFIX + "profile:" + riftKey, now - (24L * 3600_000L))
                     .apply();
 
             LauncherPreferences.DEFAULT_PREF.edit()
-                    .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, echoKey)
+                    .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, atlantisKey)
                     .apply();
         } else {
             LauncherProfiles.load();
+            // Upgrade starter profile names cleanly if upgrading from v1 starter defaults
+            if (!prefs.getBoolean(KEY_ABYSSAL_MIGRATED, false)
+                    && LauncherProfiles.mainProfileJson != null
+                    && LauncherProfiles.mainProfileJson.profiles != null) {
+                boolean changed = false;
+                SharedPreferences.Editor ed = prefs.edit().putBoolean(KEY_ABYSSAL_MIGRATED, true);
+                for (Map.Entry<String, MinecraftProfile> e : LauncherProfiles.mainProfileJson.profiles.entrySet()) {
+                    MinecraftProfile p = e.getValue();
+                    if (p == null || p.name == null) continue;
+                    if ("Echo Peaks".equals(p.name) || "(Default)".equals(p.name)) {
+                        p.name = "Atlantis Depths";
+                        ed.putString(KEY_DESC_PREFIX + "profile:" + e.getKey(),
+                                "Submerge into glowing coral canyons\nand ancient sea-lantern ruins.");
+                        changed = true;
+                    } else if ("Skyblock Odyssey".equals(p.name)) {
+                        p.name = "Coral Caverns";
+                        ed.putString(KEY_DESC_PREFIX + "profile:" + e.getKey(),
+                                "Explore vibrant bioluminescent reef tunnels and jellyfish grottos.");
+                        changed = true;
+                    } else if ("Caves & Cliffs".equals(p.name)) {
+                        p.name = "Abyssal Rift";
+                        ed.putString(KEY_DESC_PREFIX + "profile:" + e.getKey(),
+                                "Venture into deep prismarine trenches lit by sea-lanterns.");
+                        changed = true;
+                    }
+                }
+                ed.apply();
+                if (changed) {
+                    LauncherProfiles.write();
+                }
+            }
         }
 
         // Guarantee PREF_KEY_CURRENT_PROFILE always points to an existing profile key
@@ -169,7 +207,6 @@ public class WorldSaveScanner {
             if (scannedSavesDirs.contains(canonicalKey)) continue;
             scannedSavesDirs.add(canonicalKey);
 
-            // Prefer associating shared .minecraft/saves with the currently selected profile if it uses the same dir
             String ownerProfileKey = profileKey;
             MinecraftProfile activeProf = LauncherProfiles.mainProfileJson.profiles.get(activeProfileKey);
             if (activeProf != null && Tools.getGameDirPath(activeProf).getAbsolutePath().equals(gameDir.getAbsolutePath())) {
@@ -234,14 +271,16 @@ public class WorldSaveScanner {
             item.fallbackArtRes = pickFallbackArtwork(item.title);
             item.isSavedWorld = false;
 
-            String defaultDesc = "Profile • " + item.versionId;
+            String defaultDesc = "Submerge into glowing coral canyons\nand ancient sea-lantern ruins.";
+            if (!"Atlantis Depths".equalsIgnoreCase(item.title)) {
+                defaultDesc = "Instance • Minecraft " + item.versionId;
+            }
             item.description = prefs.getString(KEY_DESC_PREFIX + item.id, defaultDesc);
             item.subtitle = formatRelativeTime(item.lastPlayedMillis);
             results.add(item);
             idx++;
         }
 
-        // Sort most recently played first
         Collections.sort(results, new Comparator<DashboardWorldItem>() {
             @Override
             public int compare(DashboardWorldItem a, DashboardWorldItem b) {
@@ -260,13 +299,11 @@ public class WorldSaveScanner {
                 LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
         String featuredId = getPrefs(context).getString(KEY_FEATURED_ID, "");
 
-        // First check explicit featured item if it matches active profile or is a saved world
         for (DashboardWorldItem item : allItems) {
             if (item.id.equals(featuredId) && item.profileKey.equals(activeProfileKey)) {
                 return item;
             }
         }
-        // Otherwise match the currently selected profile
         for (DashboardWorldItem item : allItems) {
             if (!item.isSavedWorld && item.profileKey.equals(activeProfileKey)) {
                 return item;
@@ -292,11 +329,13 @@ public class WorldSaveScanner {
     public static int pickFallbackArtwork(@Nullable String title) {
         if (title == null) return R.drawable.hero_echo_peaks;
         String lower = title.toLowerCase(Locale.ROOT);
-        if (lower.contains("sky") || lower.contains("island") || lower.contains("odyssey") || lower.contains("aether")) {
+        if (lower.contains("coral") || lower.contains("cavern") || lower.contains("reef")
+                || lower.contains("sky") || lower.contains("island") || lower.contains("odyssey")) {
             return R.drawable.thumb_skyblock_odyssey;
         }
-        if (lower.contains("cave") || lower.contains("cliff") || lower.contains("nether")
-                || lower.contains("mine") || lower.contains("deep") || lower.contains("forge")) {
+        if (lower.contains("rift") || lower.contains("abyss") || lower.contains("trench")
+                || lower.contains("cave") || lower.contains("cliff") || lower.contains("nether")
+                || lower.contains("deep") || lower.contains("forge")) {
             return R.drawable.thumb_caves_cliffs;
         }
         return R.drawable.hero_echo_peaks;
@@ -342,10 +381,6 @@ public class WorldSaveScanner {
         }
     }
 
-    /**
-     * Imports a zipped Minecraft world into targetSavesDir, handling both direct level.dat zips
-     * and zips with a top-level folder wrapper.
-     */
     @NonNull
     public static File importWorldZip(@NonNull Context context, @NonNull Uri zipUri,
                                       @NonNull File targetSavesDir) throws IOException {
@@ -366,7 +401,6 @@ public class WorldSaveScanner {
         }
         FileUtils.ensureDirectory(destWorldDir);
 
-        // Extract zip entries safely (preventing zip-slip)
         InputStream rawIn = context.getContentResolver().openInputStream(zipUri);
         if (rawIn == null) throw new IOException("Unable to open selected world archive");
         try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(rawIn))) {
@@ -390,7 +424,6 @@ public class WorldSaveScanner {
             }
         }
 
-        // If the zip had a single top-level directory containing level.dat, unwrap it cleanly
         if (!new File(destWorldDir, "level.dat").exists()) {
             File[] children = destWorldDir.listFiles();
             if (children != null && children.length == 1 && children[0].isDirectory()
@@ -411,15 +444,13 @@ public class WorldSaveScanner {
         return destWorldDir;
     }
 
-    // --- Minimal Pure-Java GZIP NBT Reader for Minecraft level.dat ---
-
     @Nullable
     private static NbtWorldMeta readLevelDat(@NonNull File levelDat) {
         try (DataInputStream in = new DataInputStream(
                 new BufferedInputStream(new GZIPInputStream(new FileInputStream(levelDat))))) {
             int rootType = in.readByte() & 0xFF;
-            if (rootType != 10) return null; // TAG_Compound
-            skipNbtString(in); // root compound name
+            if (rootType != 10) return null;
+            skipNbtString(in);
             NbtWorldMeta meta = new NbtWorldMeta();
             readCompound(in, meta, "");
             return meta;
@@ -432,7 +463,7 @@ public class WorldSaveScanner {
     private static void readCompound(DataInputStream in, NbtWorldMeta meta, String parentName) throws IOException {
         while (true) {
             int tagType = in.readByte() & 0xFF;
-            if (tagType == 0) break; // TAG_End
+            if (tagType == 0) break;
             String name = in.readUTF();
             if (tagType == 10) {
                 readCompound(in, meta, name);

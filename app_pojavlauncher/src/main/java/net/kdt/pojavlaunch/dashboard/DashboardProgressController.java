@@ -2,8 +2,6 @@ package net.kdt.pojavlaunch.dashboard;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,8 +24,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Binds real-time ProgressKeeper download/unpack metrics to the Aurora Glass
- * bottom-right status card ("Updating World Files • 68% • 128 MB / 188 MB • 4.1 MB/s").
+ * Binds real-time ProgressKeeper download/unpack metrics to the Abyssal Bioluminescent Ocean
+ * bottom-right wave card ("Updating World Files • 84%").
  */
 public class DashboardProgressController implements TaskCountListener {
 
@@ -43,21 +41,17 @@ public class DashboardProgressController implements TaskCountListener {
 
     private final Context mContext;
     private final View mRootView;
-    private final ImageView mIconView;
-    private final TextView mTitleView;
-    private final TextView mPercentView;
+    private final AbyssalWaveProgressView mWaveView;
+    private final TextView mHeaderTextView;
     private final TextView mSubtitleView;
-    private final ProgressBar mProgressBar;
     private final List<KeyBinding> mBindings = new ArrayList<>();
 
     public DashboardProgressController(@NonNull View cardRoot) {
         mContext = cardRoot.getContext();
         mRootView = cardRoot;
-        mIconView = cardRoot.findViewById(R.id.aurora_progress_icon);
-        mTitleView = cardRoot.findViewById(R.id.aurora_progress_title);
-        mPercentView = cardRoot.findViewById(R.id.aurora_progress_percent);
+        mWaveView = cardRoot.findViewById(R.id.abyssal_wave_view);
+        mHeaderTextView = cardRoot.findViewById(R.id.aurora_progress_header_text);
         mSubtitleView = cardRoot.findViewById(R.id.aurora_progress_subtitle);
-        mProgressBar = cardRoot.findViewById(R.id.aurora_progress_bar);
     }
 
     public void attach() {
@@ -70,6 +64,9 @@ public class DashboardProgressController implements TaskCountListener {
     }
 
     public void detach() {
+        if (mWaveView != null) {
+            mWaveView.setWaveActive(false);
+        }
         for (KeyBinding binding : mBindings) {
             ProgressKeeper.removeListener(binding.key, binding);
         }
@@ -81,6 +78,9 @@ public class DashboardProgressController implements TaskCountListener {
         if (ProgressKeeper.getTaskCount() > 0) return;
         mRootView.post(() -> {
             if (ProgressKeeper.getTaskCount() > 0) return;
+            if (mWaveView != null) {
+                mWaveView.setWaveActive(false);
+            }
             WorldSaveScanner.ensureProfilesInitialized(mContext);
             String currentKey = LauncherPreferences.DEFAULT_PREF.getString(
                     LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
@@ -93,25 +93,20 @@ public class DashboardProgressController implements TaskCountListener {
             String displayVer = WorldSaveScanner.formatVersionLabel(mContext, normVer);
 
             File clientJar = new File(Tools.DIR_HOME_VERSION, normVer + File.separator + normVer + ".jar");
-            int ramMb = LauncherPreferences.PREF_RAM_ALLOCATION;
-
             if (clientJar.exists()) {
                 double jarMb = clientJar.length() / (1024d * 1024d);
-                mIconView.setImageResource(R.drawable.ic_aurora_check);
-                mTitleView.setText(R.string.aurora_world_files_ready);
-                mProgressBar.setIndeterminate(false);
-                mProgressBar.setProgress(100);
-                mPercentView.setText("100%");
+                mHeaderTextView.setText("World Files Ready • 100%");
                 mSubtitleView.setText(String.format(Locale.US,
-                        "%s (%.0f MB client) • %d MB RAM", displayVer, Math.max(1d, jarMb), ramMb));
+                        "%s verified (%.0f MB client)", displayVer, Math.max(1d, jarMb)));
+                if (mWaveView != null) {
+                    mWaveView.setProgress(86);
+                }
             } else {
-                mIconView.setImageResource(R.drawable.ic_aurora_download);
-                mTitleView.setText("Sync Game Files • " + displayVer);
-                mProgressBar.setIndeterminate(false);
-                mProgressBar.setProgress(0);
-                mPercentView.setText("0%");
-                mSubtitleView.setText(String.format(Locale.US,
-                        "Tap ↓ to pre-download • %d MB RAM", ramMb));
+                mHeaderTextView.setText("World Files • " + displayVer);
+                mSubtitleView.setText("Tap card to pre-sync game files");
+                if (mWaveView != null) {
+                    mWaveView.setProgress(64);
+                }
             }
         });
     }
@@ -120,6 +115,12 @@ public class DashboardProgressController implements TaskCountListener {
     public void onUpdateTaskCount(int taskCount) {
         if (taskCount <= 0) {
             refreshIdleState();
+        } else {
+            mRootView.post(() -> {
+                if (mWaveView != null) {
+                    mWaveView.setWaveActive(true);
+                }
+            });
         }
     }
 
@@ -132,27 +133,27 @@ public class DashboardProgressController implements TaskCountListener {
 
         @Override
         public void onProgressStarted() {
-            mRootView.post(() -> mIconView.setImageResource(R.drawable.ic_aurora_download));
+            mRootView.post(() -> {
+                if (mWaveView != null) {
+                    mWaveView.setWaveActive(true);
+                }
+            });
         }
 
         @Override
         public void onProgressUpdated(final int progress, final int resid, final Object... va) {
             mRootView.post(() -> {
-                mIconView.setImageResource(R.drawable.ic_aurora_download);
-                int clamped = Math.max(0, Math.min(100, progress));
-                if (progress < 0) {
-                    mProgressBar.setIndeterminate(true);
-                    mPercentView.setText("...");
-                } else {
-                    mProgressBar.setIndeterminate(false);
-                    mProgressBar.setProgress(clamped);
-                    mPercentView.setText(clamped + "%");
+                int clamped = progress < 0 ? 50 : Math.max(5, Math.min(100, progress));
+                if (mWaveView != null) {
+                    mWaveView.setWaveActive(true);
+                    mWaveView.setProgress(clamped);
                 }
+                String pctSuffix = progress < 0 ? "" : (" • " + Math.max(0, Math.min(100, progress)) + "%");
 
                 if (resid == R.string.newdl_downloading_game_files_size
                         && va != null && va.length >= 3
                         && va[0] instanceof Number && va[1] instanceof Number && va[2] instanceof Number) {
-                    mTitleView.setText(R.string.aurora_updating_world_files);
+                    mHeaderTextView.setText(mContext.getString(R.string.aurora_updating_world_files) + pctSuffix);
                     double dlMb = ((Number) va[0]).doubleValue();
                     double totalMb = ((Number) va[1]).doubleValue();
                     double speed = ((Number) va[2]).doubleValue();
@@ -164,7 +165,7 @@ public class DashboardProgressController implements TaskCountListener {
                 if (resid == R.string.newdl_downloading_game_files
                         && va != null && va.length >= 3
                         && va[0] instanceof Number && va[1] instanceof Number && va[2] instanceof Number) {
-                    mTitleView.setText(R.string.aurora_updating_world_files);
+                    mHeaderTextView.setText(mContext.getString(R.string.aurora_updating_world_files) + pctSuffix);
                     long done = ((Number) va[0]).longValue();
                     long total = ((Number) va[1]).longValue();
                     double speed = ((Number) va[2]).doubleValue();
@@ -173,9 +174,8 @@ public class DashboardProgressController implements TaskCountListener {
                     return;
                 }
 
-                mTitleView.setText(resolveKeyTitle(key));
-                String detail = formatFallbackDetail(resid, va);
-                mSubtitleView.setText(detail);
+                mHeaderTextView.setText(resolveKeyTitle(key) + pctSuffix);
+                mSubtitleView.setText(formatFallbackDetail(resid, va));
             });
         }
 
