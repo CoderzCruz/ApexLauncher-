@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ApexLauncher — Instance Management (as implemented)</title>
+<style>
+  :root{--mint:#7DE8D0;--mint-hi:#93F5E1;--ink:#07120F;--white:#fff;--sub:#CDDCDC;--muted:#99ADAE;--line:rgba(255,255,255,.15)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#050a0a;color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:16px 14px 30px;display:flex;flex-direction:column;align-items:center;gap:12px}
+  .head{text-align:center}
+  .head h1{font-size:16px;font-weight:800}
+  .head h1 span{color:var(--mint)}
+  .head p{font-size:11.5px;color:#8fa8a6;margin-top:3px}
+  .stage{position:relative;width:min(1560px,97vw);aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 26px 70px rgba(0,0,0,.8);background:#0a1112}
+  .wall{position:absolute;inset:0;background:url("../app_pojavlauncher/src/main/res/drawable-nodpi/bg_aurora_dashboard.jpg") center/cover no-repeat}
+  .glaze{position:absolute;inset:0;background:rgba(9,16,17,.22)}
+  .vig{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,8,9,.45),rgba(7,16,17,.10) 32%,transparent 55%)}
+  .shell{position:absolute;inset:0;padding:10px 12px 10px 10px;display:flex;gap:12px}
+
+  .rail{flex:0 0 58px;border-radius:26px;border:1px solid var(--line);backdrop-filter:blur(18px) saturate(130%);
+    background:linear-gradient(180deg,rgba(19,27,28,.60),rgba(15,22,24,.55) 45%,rgba(17,25,26,.60));
+    display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:6px}
+  .logo{width:38px;height:38px;border-radius:12px;border:1.4px solid var(--mint);background:rgba(255,255,255,.15);
+    display:grid;place-items:center;font-weight:800;font-size:17px;color:var(--mint)}
+  .rail hr{width:22px;border:0;border-top:1px solid rgba(255,255,255,.15);margin:4px 0}
+  .ritem{width:44px;height:44px;border-radius:13px;display:grid;place-items:center}
+  .ritem svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .ritem.on{background:linear-gradient(180deg,var(--mint),#5FDCC2);border:1px solid rgba(255,255,255,.75);box-shadow:0 0 18px rgba(125,232,208,.35)}
+  .ritem.on svg{stroke:var(--ink)}
+
+  .screen{flex:1;min-width:0;display:flex;flex-direction:column;padding:12px}
+  .top{display:flex;align-items:center;gap:8px}
+  .titles{flex:1;min-width:0}
+  .titles h2{font-size:22px;font-weight:800;line-height:1.1}
+  .titles p{font-size:12px;color:var(--sub);margin-top:2px}
+  .badge{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    display:grid;place-items:center;font-weight:800;font-size:14px}
+  .iconbtn{width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);display:grid;place-items:center}
+  .iconbtn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .install{height:42px;border-radius:14px;padding:0 16px;display:flex;align-items:center;gap:6px;
+    background:linear-gradient(180deg,#8CF2DE,var(--mint));border:1px solid rgba(255,255,255,.4);color:var(--ink);
+    font-weight:800;font-size:13.5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+  .install b{font-size:16px;line-height:1}
+
+  .body{flex:1;display:flex;gap:12px;margin-top:12px;min-height:0}
+  .panel{border-radius:22px;border:1px solid var(--line);
+    background:linear-gradient(270deg,rgba(23,31,32,.60),rgba(19,26,27,.57) 50%,rgba(18,24,25,.60));
+    backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
+    box-shadow:0 18px 44px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.07)}
+
+  /* list */
+  .list{flex:9;display:flex;flex-direction:column;padding:12px;min-width:0}
+  .search{height:46px;border-radius:23px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
+    display:flex;align-items:center;gap:9px;padding:0 14px}
+  .search svg{width:17px;height:17px;stroke:var(--sub);fill:none;stroke-width:2;stroke-linecap:round}
+  .search span{color:var(--muted);font-size:13px}
+  .chips{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+  .chip{height:34px;border-radius:999px;padding:0 16px;display:grid;place-items:center;font-size:12.5px;font-weight:700;
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);color:#fff}
+  .chip.on{background:linear-gradient(180deg,var(--mint-hi),var(--mint));border:0;color:var(--ink)}
+  .listrow{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+  .listrow b{font-size:13px}
+  .sortbtn{width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);display:grid;place-items:center}
+  .sortbtn svg{width:16px;height:16px;fill:#CDDCDC}
+  .rows{margin-top:9px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:11px;padding:7px;border-radius:16px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10)}
+  .row.sel{background:linear-gradient(270deg,rgba(125,232,208,.20),rgba(125,232,208,.10));border:1.5px solid rgba(125,232,208,.70)}
+  .tile{width:48px;height:48px;border-radius:16px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;flex:0 0 48px}
+  .tile svg{width:32px;height:32px}
+  .row .tx{flex:1;min-width:0}
+  .row .tx b{display:block;font-size:14.5px;font-weight:800}
+  .row .tx small{font-size:11px;color:var(--muted)}
+  .dot{width:9px;height:9px;border-radius:50%;background:#5BE39A;border:1px solid #0A1A14;margin-right:4px}
+  .dot.off{visibility:hidden}
+
+  /* detail */
+  .detail{flex:11;display:flex;flex-direction:column;padding:14px;min-width:0}
+  .dhead{display:flex;align-items:center;gap:12px}
+  .dtile{width:62px;height:62px;border-radius:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;flex:0 0 62px}
+  .dtile svg{width:42px;height:42px}
+  .dhead .tx{flex:1;min-width:0}
+  .dhead h3{font-size:25px;font-weight:800;line-height:1.05}
+  .pills{display:flex;gap:6px;margin-top:6px}
+  .pill{font-size:11px;padding:3px 11px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20)}
+  .sqbtn{width:38px;height:38px;border-radius:13px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);display:grid;place-items:center;flex:0 0 38px}
+  .sqbtn svg{width:20px;height:20px}
+  .tabs{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+  .tab{height:36px;border-radius:14px;padding:0 14px;display:grid;place-items:center;font-size:12.5px;font-weight:700;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);color:var(--sub)}
+  .tab.on{background:rgba(125,232,208,.18);border:1.2px solid rgba(125,232,208,.65);color:#fff}
+  .content{flex:1;margin-top:10px;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+  .tagrow{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-size:11px;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}
+  .tag.on{background:linear-gradient(180deg,var(--mint-hi),var(--mint));color:var(--ink);border:0;font-weight:700}
+  .tiles{display:flex;gap:8px}
+  .stat{flex:1;border-radius:16px;padding:9px 12px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.10)}
+  .stat .t{display:flex;align-items:center;gap:8px}
+  .stat svg{width:18px;height:18px;stroke:var(--mint);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .stat .n{font-size:14px;font-weight:800}
+  .stat .l{font-size:10.5px;color:var(--muted);margin-top:4px}
+  .info{display:flex;gap:8px;font-size:11px;color:var(--sub)}
+  .info i{color:var(--muted);font-style:normal}
+  .info span{color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .play{margin-top:10px;height:58px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;
+    background:linear-gradient(270deg,#86EFD9,#6FE3CB);border:1px solid rgba(255,255,255,.4);color:var(--ink);
+    font-weight:800;font-size:18px;letter-spacing:.04em;box-shadow:0 0 24px rgba(125,232,208,.3), inset 0 1px 0 rgba(255,255,255,.5)}
+  .play svg{width:17px;height:17px;fill:#032229}
+  .caption{margin-top:7px;text-align:center;font-size:11.5px;color:var(--sub)}
+  .foot{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .fchip{background:rgba(125,232,208,.10);border:1px solid rgba(125,232,208,.32);color:#9ef2e0;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Instance Management — <span>shipped implementation</span></h1>
+  <p>Exactly what the new screen does in the APK: live instance list, real counts, tabs and the mint PLAY bar. (Static preview — the APK is fully interactive.)</p>
+</div>
+
+<div class="stage">
+  <div class="wall"></div><div class="glaze"></div><div class="vig"></div>
+  <div class="shell">
+
+    <div class="rail">
+      <div class="logo">A</div><hr>
+      <div class="ritem"><svg viewBox="0 0 24 24"><path d="M3.6 10.6 12 3.8l8.4 6.8V20h-6v-5.4H9.6V20h-6z"/></svg></div>
+      <div class="ritem"><svg viewBox="0 0 24 24"><path d="M12 4.6v14.8M4.6 12h14.8"/></svg></div>
+      <div class="ritem on"><svg viewBox="0 0 24 24"><path d="M4.3 4.3h6v6h-6zM13.7 4.3h6v6h-6zM4.3 13.7h6v6h-6zM13.7 13.7h6v6h-6z"/></svg></div>
+      <div class="ritem"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8M12 3.6c2.6 2.4 3.9 5.4 3.9 8.4s-1.3 6-3.9 8.4c-2.6-2.4-3.9-5.4-3.9-8.4S9.4 6 12 3.6z"/></svg></div>
+      <div class="ritem"><svg viewBox="0 0 24 24"><path d="M13.6 3.6C17 4.2 19.8 7 20.4 10.4l-5 5-3.5-3.5zM11.9 11.9 8.6 8.6"/></svg></div>
+      <div class="ritem"><svg viewBox="0 0 24 24"><path d="M6 8.6v10.8h12V8.6M6 8.6 4.4 5h15.2L18 8.6M6 8.6h12"/></svg></div>
+      <div class="ritem"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 8.9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 8.9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></div>
+      <div class="ritem"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.2" r="3.2"/><path d="M2.6 20c0-3.4 2.8-5.4 6.4-5.4s6.4 2 6.4 5.4M16.6 5.4a2.9 2.9 0 1 1 0 5.8"/></svg></div>
+    </div>
+
+    <div class="screen">
+      <div class="top">
+        <div class="titles"><h2>Instance Management</h2><p>Select an instance to manage</p></div>
+        <div class="badge">2</div>
+        <div class="iconbtn"><svg viewBox="0 0 24 24"><path d="M3.4 7.4h6.4l2 2h8.8v10.2H3.4z"/><path d="M4.6 7.4V5.2h6.6l2 2.2"/></svg></div>
+        <div class="install"><b>+</b> Install</div>
+      </div>
+
+      <div class="body">
+        <!-- list -->
+        <div class="panel list">
+          <div class="search">
+            <svg viewBox="0 0 24 24"><circle cx="10.6" cy="10.6" r="6.2"/><path d="M15.4 15.4 20 20"/></svg>
+            <span>Search instances…</span>
+          </div>
+          <div class="chips">
+            <div class="chip on">All</div><div class="chip">Modpacks</div><div class="chip">Vanilla</div><div class="chip">Pinned</div>
+          </div>
+          <div class="listrow">
+            <b>2 installed</b>
+            <div class="sortbtn"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg></div>
+          </div>
+          <div class="rows">
+            <div class="row sel">
+              <div class="tile"><svg viewBox="0 0 24 24"><path d="M12 2.6 21.6 7.6 12 12.6 2.4 7.6z" fill="#7BD662"/><path d="M2.4 7.6 12 12.6v2.8L2.4 10.4z" fill="#5CBF47"/><path d="M12 12.6 21.6 7.6v10L12 22.6z" fill="#A9744B"/><path d="M2.4 10.4 12 15.4v7.2L2.4 17.6z" fill="#8B5B39"/></svg></div>
+              <div class="tx"><b>1.12.2</b><small>Vanilla · 1.12.2</small></div>
+              <div class="dot"></div>
+            </div>
+            <div class="row">
+              <div class="tile"><svg viewBox="0 0 24 24"><path d="M12 2.6 21.6 7.6 12 12.6 2.4 7.6z" fill="#7BD662"/><path d="M2.4 7.6 12 12.6v2.8L2.4 10.4z" fill="#5CBF47"/><path d="M12 12.6 21.6 7.6v10L12 22.6z" fill="#A9744B"/><path d="M2.4 10.4 12 15.4v7.2L2.4 17.6z" fill="#8B5B39"/></svg></div>
+              <div class="tx"><b>Fabric 1.21.4</b><small>Fabric · 1.21.4</small></div>
+              <div class="dot off"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- detail -->
+        <div class="panel detail">
+          <div class="dhead">
+            <div class="dtile"><svg viewBox="0 0 24 24"><path d="M12 2.6 21.6 7.6 12 12.6 2.4 7.6z" fill="#7BD662"/><path d="M2.4 7.6 12 12.6v2.8L2.4 10.4z" fill="#5CBF47"/><path d="M12 12.6 21.6 7.6v10L12 22.6z" fill="#A9744B"/><path d="M2.4 10.4 12 15.4v7.2L2.4 17.6z" fill="#8B5B39"/></svg></div>
+            <div class="tx">
+              <h3>1.12.2</h3>
+              <div class="pills"><span class="pill">Vanilla</span><span class="pill">Minecraft 1.12.2</span></div>
+            </div>
+            <div class="sqbtn"><svg viewBox="0 0 24 24"><path d="M12 20.4s-8.4-5-8.4-10.8c0-3 2.3-5.2 5.1-5.2 1.6 0 2.8.8 3.3 1.7.5-.9 1.7-1.7 3.3-1.7 2.8 0 5.1 2.2 5.1 5.2 0 5.8-8.4 10.8-8.4 10.8z" fill="#7DE8D0"/></svg></div>
+            <div class="sqbtn"><svg viewBox="0 0 24 24" fill="#fff"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div>
+          </div>
+
+          <div class="tabs">
+            <div class="tab on">Overview</div><div class="tab">Mods</div><div class="tab">Resource Packs</div>
+            <div class="tab">Worlds</div><div class="tab">Settings</div>
+          </div>
+
+          <div class="content">
+            <div class="tagrow">
+              <div class="tag on">Healthy</div><div class="tag">Vanilla</div><div class="tag">Minecraft 1.12.2</div><div class="tag">1.12.2</div>
+            </div>
+            <div class="tiles">
+              <div class="stat"><div class="t"><svg viewBox="0 0 24 24"><path d="M12 2.9 20.5 7.4v9.2L12 21.1 3.5 16.6V7.4z"/><path d="M3.5 7.4 12 11.9l8.5-4.5M12 11.9v9.2"/></svg><span class="n">23</span></div><div class="l">Mods</div></div>
+              <div class="stat"><div class="t"><svg viewBox="0 0 24 24"><path d="M3.8 8.4 12 4.2l8.2 4.2L12 12.6zM3.8 12.2 12 16.4l8.2-4.2M3.8 15.8 12 20l8.2-4.2"/></svg><span class="n">8</span></div><div class="l">Resource Packs</div></div>
+            </div>
+            <div class="tiles">
+              <div class="stat"><div class="t"><svg viewBox="0 0 24 24"><path d="M9.6 17.4h4.8M10.2 20.4h3.6M12 3.6a5.6 5.6 0 0 1 3.4 10.1v1.7H8.6v-1.7A5.6 5.6 0 0 1 12 3.6z"/></svg><span class="n">0</span></div><div class="l">Shaders</div></div>
+              <div class="stat"><div class="t"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8M12 3.6c2.6 2.4 3.9 5.4 3.9 8.4s-1.3 6-3.9 8.4c-2.6-2.4-3.9-5.4-3.9-8.4S9.4 6 12 3.6z"/></svg><span class="n">4</span></div><div class="l">Worlds</div></div>
+            </div>
+            <div class="info"><i>Last played</i><span>2 days ago</span></div>
+            <div class="info"><i>Game folder</i><span>/storage/emulated/0/games/PojavLauncher/.minecraft</span></div>
+            <div class="info"><i>Java runtime</i><span>Auto</span></div>
+          </div>
+
+          <div class="play"><svg viewBox="0 0 24 24"><path d="M8 4.8c0-1 1.1-1.6 2-1.1l9.4 6.6c.8.5.8 1.7 0 2.2L10 19.1c-.9.5-2-.1-2-1.1z"/></svg>PLAY</div>
+          <div class="caption">Selected as the current launch instance</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  <span class="fchip">Search + All/Modpacks/Vanilla/Pinned filters</span>
+  <span class="fchip">Real mod / pack / shader / world counts</span>
+  <span class="fchip">Pin (heart) → Pinned filter</span>
+  <span class="fchip">Install → new instance</span>
+  <span class="fchip">Delete / edit / folder / logs</span>
+</div>
+
+</body>
+</html>
