@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/launcher_navigation"
+    android:layout_width="64dp"
+    android:layout_height="match_parent"
+    android:background="@drawable/launcher_panel"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+
+    <ImageView
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:contentDescription="@string/app_short_name"
+        android:padding="3dp"
+        android:src="@drawable/ic_pojav_full" />
+
+    <ImageButton
+        android:id="@+id/launcher_nav_home"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/launcher_rail_active"
+        android:contentDescription="@string/launcher_home"
+        android:padding="12dp"
+        android:src="@drawable/launcher_ic_home"
+        android:tint="@color/launcher_on_accent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="false"
+        android:scrollbars="none">
+        <LinearLayout
+            android:id="@+id/launcher_rail_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/launcher_nav_create"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/launcher_rail_button"
+                android:contentDescription="@string/launcher_create_profile_title"
+                android:padding="12dp"
+                android:src="@drawable/launcher_ic_add" />
+            <ImageButton
+                android:id="@+id/launcher_nav_modpacks"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/launcher_rail_button"
+                android:contentDescription="@string/launcher_explore_modpacks"
+                android:padding="12dp"
+                android:src="@drawable/launcher_ic_search" />
+            <ImageButton
+                android:id="@+id/launcher_nav_controls"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/launcher_rail_button"
+                android:contentDescription="@string/mcl_option_customcontrol"
+                android:padding="12dp"
+                android:src="@drawable/launcher_ic_controls" />
+            <ImageButton
+                android:id="@+id/launcher_nav_files"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/launcher_rail_button"
+                android:contentDescription="@string/launcher_tool_files"
+                android:padding="12dp"
+                android:src="@drawable/launcher_ic_folder" />
+        </LinearLayout>
+    </ScrollView>
+
+    <ImageButton
+        android:id="@+id/setting_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/launcher_rail_button"
+        android:contentDescription="@string/launcher_tool_settings"
+        android:padding="12dp"
+        android:src="@drawable/launcher_ic_settings" />
+</LinearLayout>

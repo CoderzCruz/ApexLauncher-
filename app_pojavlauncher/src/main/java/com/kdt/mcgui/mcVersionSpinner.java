@@ -1,10 +1,10 @@
 package com.kdt.mcgui;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static net.kdt.pojavlaunch.fragments.ProfileEditorFragment.DELETED_PROFILE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Build;
 import android.transition.Slide;
 import android.transition.Transition;
@@ -57,6 +57,7 @@ public class mcVersionSpinner extends ExtendedTextView {
     private PopupWindow mPopupWindow = null;
     private Object mPopupAnimation;
     private int mSelectedIndex;
+    @Nullable private Runnable mOnProfileChangedListener;
 
     private final ProfileAdapter mProfileAdapter = new ProfileAdapter(new ProfileAdapterExtra[]{
             new ProfileAdapterExtra(VERSION_SPINNER_PROFILE_CREATE,
@@ -72,6 +73,12 @@ public class mcVersionSpinner extends ExtendedTextView {
                 .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
                         mProfileAdapter.getItem(position).toString())
                 .apply();
+        if (mOnProfileChangedListener != null) mOnProfileChangedListener.run();
+    }
+
+    /** Observe changes to the selected profile while this view is attached. */
+    public void setOnProfileChangedListener(@Nullable Runnable listener) {
+        mOnProfileChangedListener = listener;
     }
 
     public void setSelection(int position){
@@ -89,9 +96,12 @@ public class mcVersionSpinner extends ExtendedTextView {
         }
     }
 
-    /** Reload profiles from the file, forcing the spinner to consider the new data */
+    /** Reload profiles and keep the visible selection in sync with the saved profile. */
     public void reloadProfiles(){
         mProfileAdapter.reloadProfiles();
+        int selected = mProfileAdapter.resolveProfileIndex(
+                LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, ""));
+        setProfileSelection(Math.max(0, selected));
     }
 
     /** Initialize various behaviors */
@@ -126,6 +136,17 @@ public class mcVersionSpinner extends ExtendedTextView {
                     mPopupWindow.dismiss();
                     return;
                 }
+                // The dashboard can be much narrower than the window, especially in landscape.
+                // Size the popup to its anchor and let Android keep it within the visible frame.
+                Rect frame = new Rect();
+                getWindowVisibleDisplayFrame(frame);
+                int inset = (int) (16 * getResources().getDisplayMetrics().density);
+                int minimumWidth = (int) (240 * getResources().getDisplayMetrics().density);
+                int availableWidth = frame.width() > inset ? frame.width() - inset : getWidth();
+                mPopupWindow.setWidth(Math.min(Math.max(getWidth(), minimumWidth), availableWidth));
+                int desiredHeight = getResources().getDimensionPixelOffset(R.dimen._184sdp);
+                if (frame.height() > inset) desiredHeight = Math.min(desiredHeight, frame.height() - inset);
+                mPopupWindow.setHeight(desiredHeight);
                 mPopupWindow.showAsDropDown(mcVersionSpinner.this, 0, offset);
                 // Post() is required for the layout inflation phase
                 post(() -> mListView.setSelection(mSelectedIndex));
@@ -158,9 +179,10 @@ public class mcVersionSpinner extends ExtendedTextView {
             }
         });
 
-        mPopupWindow = new PopupWindow(mListView, MATCH_PARENT, getContext().getResources().getDimensionPixelOffset(R.dimen._184sdp));
+        mPopupWindow = new PopupWindow(mListView, getWidth(), getContext().getResources().getDimensionPixelOffset(R.dimen._184sdp));
+        mPopupWindow.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.launcher_popup, null));
         mPopupWindow.setElevation(5);
-        mPopupWindow.setClippingEnabled(false);
+        mPopupWindow.setClippingEnabled(true);
 
         // Block clicking outside of the popup window
         mPopupWindow.setOutsideTouchable(true);
@@ -193,6 +215,12 @@ public class mcVersionSpinner extends ExtendedTextView {
         }else {
             mPopupWindow.dismiss();
         }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (mPopupWindow != null) mPopupWindow.dismiss();
+        super.onDetachedFromWindow();
     }
 
     public ProfileAdapter getProfileAdapter() {

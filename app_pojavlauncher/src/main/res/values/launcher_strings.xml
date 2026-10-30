@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="launcher_space_title">Your space</string>
+    <string name="launcher_space_subtitle">Launch, manage, and shape your Minecraft experience.</string>
+    <string name="launcher_selected_profile">Selected profile</string>
+    <string name="launcher_selected_profile_subtitle">Choose a profile and start playing.</string>
+    <string name="launcher_choose_profile">Choose a profile</string>
+    <string name="launcher_edit_profile">Edit profile</string>
+    <string name="launcher_create_profile_title">Create profile</string>
+    <string name="launcher_create_profile_subtitle">Vanilla or modded</string>
+    <string name="launcher_explore_modpacks">Explore modpacks</string>
+    <string name="launcher_explore_modpacks_subtitle">Discover new worlds</string>
+    <string name="launcher_controls_subtitle">Make them your own</string>
+    <string name="launcher_quick_tools">Quick tools</string>
+    <string name="launcher_tool_files">Game files</string>
+    <string name="launcher_tool_settings">Settings</string>
+    <string name="launcher_tool_logs">Share logs</string>
+    <string name="launcher_tool_jar">Run a .jar</string>
+    <string name="launcher_tool_gamepad">Gamepad mapper</string>
+    <string name="launcher_tasks_title">Tasks &amp; activity</string>
+    <string name="launcher_tasks_idle">No tasks running</string>
+    <string name="launcher_account_title">Account</string>
+    <string name="launcher_account_subtitle">Minecraft: Java Edition</string>
+    <string name="launcher_home">Home</string>
+    <string name="launcher_profile_details">Profile details</string>
+    <string name="launcher_profile_directory">Game directory</string>
+    <string name="launcher_profile_runtime">Runtime preference</string>
+</resources>

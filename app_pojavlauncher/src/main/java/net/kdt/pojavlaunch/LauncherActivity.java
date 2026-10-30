@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -62,6 +63,9 @@ public class LauncherActivity extends BaseActivity {
     private mcAccountSpinner mAccountSpinner;
     private FragmentContainerView mFragmentView;
     private ImageButton mSettingsButton;
+    private ImageButton mHomeButton;
+    private View mAccountAddButton;
+    private View mRailActions;
     private ProgressLayout mProgressLayout;
     private ProgressServiceKeeper mProgressServiceKeeper;
     private ModloaderInstallTracker mInstallTracker;
@@ -71,8 +75,23 @@ public class LauncherActivity extends BaseActivity {
     private final FragmentManager.FragmentLifecycleCallbacks mFragmentCallbackListener = new FragmentManager.FragmentLifecycleCallbacks() {
         @Override
         public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
-            mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), f instanceof MainMenuFragment
-                    ? R.drawable.ic_menu_settings : R.drawable.ic_menu_home));
+            // Dialogs and nested fragments must not change the dashboard navigation state.
+            if (fm != getSupportFragmentManager() || f != fm.findFragmentById(R.id.container_fragment)) return;
+            boolean isHome = f instanceof MainMenuFragment;
+            mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), isHome
+                    ? R.drawable.launcher_ic_settings : R.drawable.launcher_ic_home));
+            mSettingsButton.setContentDescription(getString(isHome
+                    ? R.string.launcher_tool_settings : R.string.launcher_home));
+            if (mAccountAddButton != null) {
+                mAccountAddButton.setEnabled(isHome);
+                mAccountAddButton.setAlpha(isHome ? 1f : 0.45f);
+            }
+            if (mRailActions != null) mRailActions.setVisibility(isHome ? View.VISIBLE : View.GONE);
+            if (mHomeButton != null) {
+                mHomeButton.setBackgroundResource(isHome ? R.drawable.launcher_rail_active : R.drawable.launcher_rail_button);
+                mHomeButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(LauncherActivity.this,
+                        isHome ? R.color.launcher_on_accent : R.color.launcher_icon)));
+            }
         }
     };
 
@@ -212,6 +231,7 @@ public class LauncherActivity extends BaseActivity {
         ProgressKeeper.addTaskCountListener((mProgressServiceKeeper = new ProgressServiceKeeper(this)));
 
         mSettingsButton.setOnClickListener(mSettingButtonListener);
+        bindDashboardNavigation();
         ProgressKeeper.addTaskCountListener(mProgressLayout);
         ExtraCore.addExtraListener(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.addExtraListener(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
@@ -250,16 +270,21 @@ public class LauncherActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStop() {
+        getSupportFragmentManager().unregisterFragmentLifecycleCallbacks(mFragmentCallbackListener);
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mProgressLayout.cleanUpObservers();
         ProgressKeeper.removeTaskCountListener(mProgressLayout);
         ProgressKeeper.removeTaskCountListener(mProgressServiceKeeper);
+        ProgressKeeper.removeTaskCountListener(mDoubleLaunchPreventionListener);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.LAUNCH_GAME, mLaunchGameListener);
-
-        getSupportFragmentManager().unregisterFragmentLifecycleCallbacks(mFragmentCallbackListener);
     }
 
     /** Custom implementation to feel more natural when a backstack isn't present */
@@ -350,11 +375,42 @@ public class LauncherActivity extends BaseActivity {
         mRequestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
     }
 
+    /** Connect the landscape rail to the same actions as the dashboard cards. */
+    private void bindDashboardNavigation() {
+        if (mAccountAddButton != null) {
+            mAccountAddButton.setOnClickListener(v -> ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true));
+        }
+        if (mHomeButton != null) {
+            mHomeButton.setOnClickListener(v -> {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(mFragmentView.getId());
+                if (!(fragment instanceof MainMenuFragment)) Tools.backToMainMenu(this);
+            });
+        }
+        bindRailShortcut(R.id.launcher_nav_create, R.id.create_profile_button);
+        bindRailShortcut(R.id.launcher_nav_modpacks, R.id.explore_modpacks_button);
+        bindRailShortcut(R.id.launcher_nav_controls, R.id.custom_control_button);
+        bindRailShortcut(R.id.launcher_nav_files, R.id.open_files_button);
+    }
+
+    private void bindRailShortcut(int railId, int actionId) {
+        View shortcut = findViewById(railId);
+        if (shortcut == null) return; // Portrait has no rail.
+        shortcut.setOnClickListener(v -> {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(mFragmentView.getId());
+            if (!(fragment instanceof MainMenuFragment) || fragment.getView() == null) return;
+            View action = fragment.getView().findViewById(actionId);
+            if (action != null) action.performClick();
+        });
+    }
+
     /** Stuff all the view boilerplate here */
     private void bindViews(){
         mFragmentView = findViewById(R.id.container_fragment);
         mSettingsButton = findViewById(R.id.setting_button);
         mAccountSpinner = findViewById(R.id.account_spinner);
         mProgressLayout = findViewById(R.id.progress_layout);
+        mAccountAddButton = findViewById(R.id.account_add_button);
+        mHomeButton = findViewById(R.id.launcher_nav_home);
+        mRailActions = findViewById(R.id.launcher_rail_actions);
     }
 }

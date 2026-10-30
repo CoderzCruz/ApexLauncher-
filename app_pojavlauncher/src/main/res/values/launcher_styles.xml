@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LauncherDashboardHeading">
+        <item name="android:textColor">@color/launcher_text</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+    <style name="LauncherSectionHeading">
+        <item name="android:textColor">@color/launcher_text</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+    <style name="LauncherCaption">
+        <item name="android:textColor">@color/launcher_text_muted</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="LauncherActionTitle">
+        <item name="android:textColor">@color/launcher_text</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="LauncherActionCaption" parent="LauncherCaption">
+        <item name="android:textSize">11sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="LauncherTool">
+        <item name="android:layout_height">52dp</item>
+        <item name="android:background">@drawable/launcher_tool</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textColor">@color/launcher_text</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+</resources>
