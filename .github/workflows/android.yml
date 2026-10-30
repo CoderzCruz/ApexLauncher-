@@ -9,6 +9,12 @@ on:
     branches-ignore:
       - 'l10n_v3_openjdk2'
   workflow_dispatch:
+    inputs:
+      publish_preview:
+        description: Publish the resulting APKs as a separate GitHub prerelease
+        type: boolean
+        required: true
+        default: false
 
 permissions:
   contents: read
@@ -122,3 +128,40 @@ jobs:
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  publish-preview:
+    # Publish only when explicitly requested by dispatch or a marked push.
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.publish_preview) ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish-apk]'))
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download full APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-debug
+          path: apk/full
+
+      - name: Download APK without runtimes
+        uses: actions/download-artifact@v4
+        with:
+          name: app-debug-noruntime
+          path: apk/noruntime
+
+      - name: Publish a separate preview release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="preview-${GITHUB_SHA::8}-${GITHUB_RUN_ID}"
+          NOTES="Debug build from commit \`${GITHUB_SHA}\` on branch \`${GITHUB_REF_NAME}\`.
+
+          - app-debug.apk includes OpenJDK 8, 17, and 21 runtimes.
+          - app-debug-noruntime.apk does not include Java runtimes."
+          gh release create "$TAG" \
+            apk/full/app-debug.apk apk/full/SHA256SUMS.txt apk/noruntime/app-debug-noruntime.apk \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "ApexLauncher preview (${GITHUB_SHA::8})" \
+            --notes "$NOTES" --prerelease --latest=false
